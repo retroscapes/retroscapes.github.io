@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Define and build isometric renderings of procedurally generated landscapes.">
+    <meta name="author" content="https://github.com/retroscapes">
+    <title>retroscapes</title>
+    <script>
+      var favIcons = ["iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAZaSURBVHjaYvz//z8DLQFAADEx0BgABBAL8Uq/f/t2/sb1///+G2lrc3JyEqkLIIAYiQyiq9ev7ztzWkBGGqj+6Y0bQS5u6mpqxGgECCBiffDk9ctrjx+IfPrw4OatG1evmmnrEGkBQAARGwesrGz8gkIPHzy4cuECEyMjKwuxLgMIIBLiABg4rGxsbOzsjKREMkAAEeeDf/+BxjMyIkxmYiLW6wABRNgHt+7cufX0yePnz5hBhjJCvPLp06fnr16KCgl9+/adh4cHj30AAUTAgv9//249eOD5l8+SYmKPrl3/z8wMNJ6Pj+/++/c3du7g/M/KKyrx7/tXW0MdRUVFrCYABBBhn3Lz8zGwshzYvfvGpUvAUAI6VlZV9eLFC4f2HHr1+eeli5emTZt28fJlXNoBAoiJmMhlZWdjZGZmAjqfkZGZhYWNi+vK+fMcXDyvXr3at23z718/n71+9+HDR6y6AQKIgAVAFzNCACSy/4IA0Ep2DnagGDMzC5A0MDFnFpLccPDE7v0H//75g2YCQAARiIPnr15cvniZWZAPGLFfPn55fP0Gw++/v3//+QfzHDMzM7+o5N3bt29dvcjDyuRoa41mAkAA4bTgz78/bz+9fPbtqZGZxqULt7+8eWdgqOHl78rExHz8+MUfn74wSDIyMTOB8yArMN0+uHPbSE8HM4sABBAWC/7++/Ph3YsXH559Y/nHxsFpaqarpCRpbqaqpKrIxy8ILLmUVeVUFESvXnv+6tnT37/+AD0HTKXAPMjIwAiMKDTTAAII3YJvX1++evbs97efnMzMbCwM77+9/MPJzS8gKCwq9v/fn/dvnzL+Z2Bh5nBwsTc2+3Tq2DluVjVgKP37B8yGTN9+fXv5/rm4sCQku0AAQAChWPDyze9de+9L8T1XkhX98uXjwROXrr3nsXZQ0FAA+or58sVrR0981NBQ0FZn5+PlYWNnc/Nz1tDXPnLi2d+/v4HO//X3z81Xj9///iYnLMnFyg0xEyCAoBZ8+vJn+6H32w+8f/2OV1yA2UDp+aV7t+981/nPrfhg3y99xTd/3169eEXgL6v1ow9Mfxge2Zj9YWTh+M/A/P3H7z9//jCBQuY/EyMTByfP2y+fjxw55GRqrySvDDQZIICgFpw696q997KEjAgPL9e7rzx7Lyj9Y1Xm4GL5y/z352+W4zfEmf6LMQuyc/7/Gez2xkBPlImF+fef3/9+/fjw7NXzB3c4eQSABcnzJ8+3b9j85tXLe3cemKibQEwGCCCoBf/+/v/05sPvb18FRXj4RYQ5ebiBBRzL519/WRh+cTAysTD9Z2T6x/z7F8O/xx9+ir38KinCzfmXnfM3s5uRqY6iyvaDJ879+M7CwnT2+Ok///8xgTM8xGSAAIJZ8A9YsTH++f33zcsP715/ERDhExIT5ODiZP7PyPr130/Wvz84GICa/jKy7L0oe/7eZ3P5Nw7yX/nFhZiY2f5++/L/6zsOtv8CAuysLP9///z/+9+ff/+gWQUggKAWiIlwiIpwPnv+lYeHBeibN8/ff3z7SVBUQBBoBA/bHzZmRkZw1QosNpj/fPjCvf0yz6VHPxxUP/14uufE8dN///8XF+MFVtd//vz9/uOnjKQkPx8/xGSAAELUyfcffVmw/NbGrQ/fvv3JycEC8iJQHx8zl6KQoJgwMDf9+/vvP9BdwOQCjAEWtq+fP7y6c0zx70Fhzh+MLEB//vj+7buQmISjg5ufp7e4mBjEWIAAQq/0r9/6MH/p7W27Hn/89Iubg+UP5//vXAzs7GwCovyCIkKsbOwMTKw/v354ff/0i9vHv358Y6XOIs775+fvP6z8XHa2jn4+ATLSssgGAgQQ9lbFhSvv5i25uWvPs8//fzOIsoKC5/8/dk4uIXGBnx/uPLtx+NvHl8BajZGB2VDmh6Iku4WNnZdfgKKCEqZRAAGEr9ly4szrGctv7Lj0EpgggfH97x/T/z9fPt5f///fLwZG1m/ff3BzsudFmyfGBqiqa+IyBCCACLeLdp98MWPNzaPnX/7+y8zD/uv9nfVfvnwC1v3ujkYFaQGO1vr4tQMEEKiCJQj+/vu3+dBjz9z9ovaLWGUDnEPKt+459Z84ABBAjMQ3fn/+/rd+713GX69CvC2ZmYltVQAEECOtW9cAAUTz1jVAgAEANicAGQoVotUAAAAASUVORK5CYII=","iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAWcSURBVHjaYvz//z8DLQFAADEx0BgABBDNLQAIIJpbABBANLcAIIBobgFAANHcAoAAImDBt+/f//z5Q4kFAAHEgkvi58+fV27dOnv9Fg8Xl5GasoaaGnkWAAQQFgt+//6999DRr7/+3H94/+HLFzcuXLxqaFBRXMTLzUWGBQABhMUCYJicOHfh3fv3N65cUtTR/v71y/2nz2avXK2vKO/s6ECqBQABhCUOmJmY2Dk5Xzx//uH9eyYmJhYWlh+/fh49euT4hQsfPn0i1QKAAEK34N+/fz9//WJkZGJmZoaUUoyMjD9//NAxNLj54MG8pXOfvLz14dMbBqJLMIAAQgmiew8eXrp7H2j2j+/f2dnZFJXkmRgZ//z5zczGcvvWjbNHjqnICH758fHlm+fcHNwSogoCfCIELQAIIBQLrt65e+zchfcvnn94+9rC0vTBnbvv37xWVlbl4OV5++k9Gxvb79+//vz6xcDw/9vPb49f3nrz7qGEkDQPnwQeCwACCCWIgEb8+ffvxtUrzEyMp44dP3bkKMPvPzKSMh9fvvrzE2guAysLKzMLKyMw2Bj+37v7aPLCHT0rzt9/+R2PBQABhGIBIxiwsrEBWb9//2FnZxcRFvz08fXnTx8ZmZj+/f//+88/cDJgZGBl/MnI8l3A8vBT8ewZV3vW33/4Grs1AAGEEkQ/fv4E1j////2HAEERYTkleQEBge+/fj59/VZeVpaHnf3n169MXBysnBzGxnxCPDeWHHj98IfKxlMvD11756ov4m8uJifKiWwmQABBLQAat+/wsfuPn4kKCPDw8HBysH//+hmYQH/9/Xtg/4GbV645OtvaWRqoKSmwsbD++f/r4d07xy48OHef7RObDjPrfxZWpm8//q46+nzPxdcuBmJBVtLSgswQkwECiAUWOAz3H91+9er1r++//v/5y83L9/7tGyYwAKZHoH3hgfbCQgI/fvx+8vzVvmPXzj9jeceiycQtw8z0j+EfsLD6zcTEwMnG+u03y+qjL9ftPNEUr29rrA40GSCA4D5g4ORk4GD58uf/d2MTnb9MPO/fvOMXEPj/79//f3///P379esPPr4//xh/MzD9+SOk+u+/NOv3Pwz/Pv3/x8TA+I+JmYGZmfXvn98fX9x7duvUk7tXHjqWQSwACCBEHABNYWT6JyEl9Pcvw9u37zm5uDW0Dbh5OLm47qlpqHz5+v33nz8szKwK8jKRfC+Z958/8FkVaCgw7pmYWYDuePPkzpMbJz6+fPgTmN5ABTAjxFiAAIIHEaOUuNTT54+/fP3KxsoqKMjKzS305vWDF8+ZbS00TI00uDg5gP4E5o/DR24dvvb92X9lZm42ZhYWoN8/vHr85PqJt49v/vr1nYGJ7e/Pv3IKMopy0MwBEECM8GYLkPHo6YMLl8/efXDn2/dvbGysQMHv334Ac6+snCwPN9eNW0/2XP5867M0C7880L6/v769f/Hg+d3zbx7d/Pvn57//TH9//9HXUY/wdYwPdpUUE4IYCxBAjJjtotdvX525cPLKjUs/f/4AWsPy+wsXO9P9D5w7nyixCamwsnP8+/X187Mbr2+e/Pjq0b9/f37/+c/wn8HcSCsj2ifE056HGyWZAgQQI66G17OXT89cOHXrztV/397wcjIfeSyw4pacpAgv99+Pz2+c+PL6Icv/3yCj//3XUlfMiQ+ID3bn4mTHNAcggBjxt+yevXhy4fyhJw8u7b3DuuqGPAPzP5ZHB/98eAbMzQx//2hpKGZE+8UEuQry8eAyASCAWPCXhVISMlKeUa9fWX/ZdX7Dvbe/vgOT7H+Gn3/UtZWyY31iAvEZDQEAAcRIfNv05K1XPWsvXD+5N8XXND7EQ5CfhxhdAAHESGrj9+v3X9ycbMSrBwggRlq3rgECiOYNL4AAAwCpHoHKa6473wAAAABJRU5ErkJggg==","iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAZpSURBVHjaYvz//z8DLQFAADEx0BgABBBhCz59+nz+3NVnT1/++0eOXwECiIWgisuXr2/Zsv/7t8/uHraenu6kWgAQQIR98PfvX3Z29o8fP756+ZoMHwAEEGEL/v37+/vXLx4eno+fPpFhAUAAYQkiYLp69+7961fvBQT5/v37x8jI9Ofvv0uXL0rLCGE1Aqj+1Zt3rCysQoJ8mLIAAYTFgqdPnq1avY2Tg/vu3RvCwqKfP39kZeXk4uJ68+7difPnRIVFZCTEv339cf3abXl5KWkZqZOnL+w7cvbj+7dRoV76erpopgEEEBYL/vz5++HDl6NXDj9+fN/MzBroRBERHlYWllu37x06curly6caikpvX33Zs3tXWlp8WETI528/Ll66fOf6BW83a0zTAAIImwV///DycGlqarOxsaqqqgPj4OrVS3///uFk42L/y/HywXO2fyzPnr5+/vzJ9x8/7t59dPvWfXZ2NhYWZiZmZkzTAAKIBdXtf148f/X+/afv33+wsbExMjE+e/b8zJmjbOzszEwswCz/4OF9IIOHS/Dr13tc3FwHDhw/cuT0p28/+EREGRkZscYQQAAhLPj169eK5Rv//WP+8PHdr99/zp87/v3HdwUFNaC5TIxMQDuAHhIUFGRlYTpz5sTnz5+ZmZl//Pj18uV9QVEJiOmsrKyYFgAEEAtScvz3+MnLhw8fPHv60MjYio2NHWjlfzAAmmtv5/ry+csnTx5du34RGGjc3LwM/xmAXgQayggynhGo/erV65KS0rw83AL8vHAPAQQQchAxAoPl9+/ff/78RtjPzMzNzQXUcuvGrcuXzggICwO98uvnd6DdQGXgRMwIKi4Zge77v23n/vdfGZ8+vpeXGa8gLw8xASCA0DMaIxhAPMTLwysvL2dpaQtMV/fv333/4S0TE9P/f/84ObnNzCxUVNXFxcRcXTwEBAT//P4D1MTJI3D2zKnDB/b+/PULbiBAAOHMyUB3cfPwPXr8dN++nV8+f2JnY2diYoaUHMLCYtIyCsYmFt+/fzt77vS7d68h4QGPCWCcwc0BCCAWZLdjWgMU/Prtq6gIaryxsn769OX8OWBUfwDax8nLB9eLaQhAACFbwPAfWCCDYxWltGJiQkvKwNADCgIjFuInLIayIIwFCCCE5sNHTn7/9Z2FlQWUA7CnaaBZTDIyspycXJCIRfMr0NJ//4F2Mz989BguDhBATPAi88GjR3+B6lgYOLg4IXHwD+wVIAPiRqB+OXk5W1vHv39+/fjxHe7w/yCf/2dmBjr7PzsLEysL8/bt275//wqRBQggqAVfvnz+9e2FiADQ478lpWVZ2Vm4ebk52Nkh+YABHHJsbBwMjMwbNq65f/8Ocrj9/fWL8e8vQX4BFqbfMlLCoqK8d29f2bVrJ0QWIIBYYGmG4fu3r3///NHTlv3+m/XTl5//GP6JSIgCvQEMEDZ2tp/ffkGUAWMV6FhgNECiCpgf2TnZga7+9esbO/s/Hq7fXz+/e/n8BbCwgZgMEEAsyLEHzGT/Pn1mZWXh52LR0lRk5eD79OELKzuwUGICms3EDHI1MFyYWZiFhAWAZdGXrx9+//vN+Pu/sCDLT1nhe3duXTr/FWj3r9+/4SkFIICgPuXi4rawsufl5QNWXj9//vrz8wc/NxMvx08Ojl8mptqSMtKMbAzCYiKQ8hJYQrx68/zTlw9fvn1lZf0nJMB24+rFRw/uf3j/EVgQAMsoLy8fc3MLiMkAAcSInCg/fvxw/uypS5fOffr4ARhnwIBmY2MREBL69JXxytXbTAzMwCx26+bVL1+/MLMwMfz7zcbC+O/Pz89fPwGzOjAAgMnP2tomJCTc0MgYbiZAADFiNrw+fnx//tzpS5fOf/rwHmgNMLUAA42Vjf0PA+fHz3/OnznFwvKXh5v94+v33799//339/dfX4HxZGVtExwcamRkgmYaQAAx4mrZQa25CPMNIxMr0MFMrNeu33r18vm3L9+Agf/j508OLjYzS/PQ0AgjJFcjA4AAYsTfdPz44f3586cvXzr/4f17YB5kZmY6der88xcvgAmXk43bwtIiODTU0NgYjwkAAcRITNsU6JtzZ09duXwByDh+4uynT5/s7OxDQiIMjYwI6gUIIEbiG7/AJHDm9PHz5y84OLqYmJgSqQsggBhp3boGCCCat64BAgwAru/sJvwP/jsAAAAASUVORK5CYII=","iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAARDSURBVHjaYvz//z8DLQFAADEx0BgABBDNLQAIIJpbABBANLcAIIBobgFAANHcAoAAorkFAAFEcwsAAojmFgAEEM0tAAggmlsAEECkWfDrz7+Xn3+RpAUggFiIVPfv//+Dt98vPvH8wZvvvgZioUZiMgIcxGgECCBGgqXpv3//j13/uPbo65NPP3xn+cPEzPj3x385Dg4vPTFfSxFpYXb82gECCJ8F337+PX7949ZTb8/f/fzn7392Fsb/LP//Mf0D2vL3L+PPP//E+dlcjIRcDYVUpblwGQIQQNgt+PHr385z7zYce333+TegPAcbI8QrTIygOPsPgv+YGBn//ANa85+Xg9lGjz/cTlxVEos1AAGEbgEwGg9c/rjm2JtrD7+xMDOwMf3/9/8fAyMzIxMTSOW/v////WMEApA1QPz/PyPDT4Z/n37/5eNm9dAXDrcUQ7MGIIAQFvz+w3DwyofVR1/fePyNgZGBlRliCJQEGglR+P//P6AeEAdkC8N/RsZfDP+A6O+/fz9//xPgZnE3EI2ykVYShSYfgACCWgD0fvHca4eufefn4mBhAhr5DyLOCAkTEPgH5DExAQ0FegXoK6C3gLLMwIACyn3/9+sXwx+g/H8m1u8/frF8vNOXbOBkrgXUCxBAsHzAyHDs1ovLdx48ffvq+8/vzExMzEzMQLP+gVz2F6QOKMAEDq+/f0BcZpASoMN+//39+d+PX4z/mFg5gO76/OzG8xNLL26b//jJM4jBAAGEyAdAJ/7++fv289cPX7+XEhKQFRbkZGf794/5H8grQBf/Z4QAcGT8A/oAHHDMzCw8TOw//v169fjay5vHvr55+PfnDwZgmgOFLQgABBAspBgZbbREzt969+fnn5///t5/8fb5+48ywgLSQoIcbEBrgOb9g7oDGnSg0GNiZgXy37+6/+T6oZdPr/779YOBiZXh1z8FVXk1RSmIeoAAQklFR66+mbPr7qZTz96/+8nAysTABEygLFKCfJKCAjycnECVf/8CnfYfaDAzC/ufPz/eP7/z/O6Zt0+v/f3zGxiUQIfrG6hH+zvEBzmLCQtAzAQIICz54NbTz5O33Jm3+/63Tz8Z2JiBkcrCwiLBxy0rIsjHzcPIzPr71/fXj649vX304+tHDP///vkFCg8LU83sWO8gD2suDpS8DRBAOHPy+bvvp2y5s/Lw46+ffjCwszAw/mNhZpUSFuD/8+bZjcMf3zwCRvffP6A8p6ellJvoGxvoxM7OimkOQAARKIsu3Hs/efPtlYeffP0MtIaVgfE/+4Odvz8++fefheHvP11tpaw4n+gAB15uTlwmAAQQIzFNxwv3PkzdfGv5EaA1v1ie7P7z9pGunnpWnHdUgD0fNxd+vQABxEh82xRoTe+669dP7EnxN4wOdOLl4SJGF0AAMZLa+P3x6w8waRGvHiCAGGndugYIIJrXyQABBgDsuP3AcnEEUQAAAABJRU5ErkJggg==","iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAhQSURBVHjaYvwPBAwDB/4BBBATw8ACRoAAosgB//7+ZXjw6DHD79+/yTYDIIBYyNX46PFjhoPnLjFcv3efQY6PmyEjOZEscwACiOwQeP7mHcPWPXsZtq5fw/D46ROGT5+/MOw6dJTh3v37JJkDEEBkO4CdnZ2BiYWFgZmZmeHB4ycMHVOnM7T09TGs37yFJHMAAogkB/z69ZPhDjDI//37x8DIyMjACDKAiYnh++8/DLcfPGR48vABAwsrK0kOAAggkhxw4/ZdhoZJUxkWLl3OwMrKAnYECIBCgZ2TEyjGyvDzxw+Gv3/+EG0mQAAR7YCfP38yMLKyMXz5+YvhybOnDIxAn4NCAgb+A9ncHBwMX38zMWw9cILh1p17DH+BuYQQAAgggrng969fDJt372G49fw5w/tnz8Fxz8XFxfDr21cGRqAFjMByDBQQoKwoKSnLwCMgwvDi3WeGtWsmMaTGhDDY2NjgNR8ggAg6AOTLE1euMhw+dJCBl4OTQUxRheEjMMW/ev2G4ceP7wzfvn5hADoB7BBuXkGGz99+MOzbuYTh2ZOHDN+CfQiGAEAAEXQAKJ45ubkZ/gITGhMXIwML0EG37z1kuHD5KgO3qCgDKzAnfP/2nYGVm4mBlYGFgR3oSGD8ANMDGziBEgIAAURcGgD6jomZCZjAfgLZjAw3rl5h+A5KE0ALfv/6zfALyAbFA6ha+Q+OEka44wkBgAAi6AAWZlAgQQwFpXCQZaxs7AwMf3+BU7uEmCCDkqoaw9cPH8FqwL6GOubPH8KJECCAcDrg5+/vDM/fP2LYtncXw4MHj8EGs7GzAX38E5z/Wdk5gKn8HwO/kAgDvwAfg4WhBjAXMAHLgvsMf4AJ8vef3wwnzx5neP/hJdD5uCtcgABiwQzt3wzPPj5lePr5BcPPf78Yfgv+YpCT4WW4e/kXw6dv3xiExaTAxn37+h1YALxm0NdUYXA01GRQkpNjeP3+HcPB0+cYXj1lZvBzC2Uw1dNneHL/AcMHgfcMklJSDBzsfBgOAAggRvT2wM2n9xhuvznPICwsCgxKdqBvgcH49w/D2ROXGC6cugUsD1gYrl88z6Cjq8bgbm/NoKWuwsDGxAF0OBMQ/2H4w/Cb4ev3rwyCPIJA3zADCylGhidP7zI8fP6eISYqjoGFBaWk/A8QQHAHfP7xj2HL6bcMyw+/YBDgfsZgo/WFQUWGlYGDkwdYAHEB452V4df3H0BHXGH4+eoTg7O5LQMXBw/DPyD89vMDw6dPbxkE+EUYWJi4GZiZmIEJ9B/D+0/PGc5fuMVw4PRnhre/TBksLLQZIr3EGLSU2OEOAAggsAOevvnOUDznJtDn/xlYmZnAvuFg/c6gKf2KwVzrJ4OqHA8DM9AR//79B9LAzMYI9NmXfwwcP5kZnj97xLDvyDWGt59EGZytZRlU5LmAaZCJ4fK1awz7T71mePJRm4GBSxOYmFmB6QJYrvx5xxDlzsKQFGEMdgBAAIHTwOv3Pxj2HLjJICjCxyAiLsTAxsHO8OcfO8O5+/IMt198ZzBSfM5gpPIemBaEgIYDXc/CxPDi2yOG0weuM1w+w8Twg8mCgYlDkmHNwe8MeopvGT5+uMFw/q4gAyNXIAMLLwcwGhgY/vz6zvD51RWGy6e3MUgw68EcwAAQQGAHMDMxAjEDw6vn7xg+vf/IwCfExyAkJgIMfg6GH7/YGQ5dk2e4+vgrg6naawYj1c8Md6/dB/ruG8MrBmNgYSTHwPPrHwPLn18MP36zMhy9KcXw778UAwsfO9DXoPriD8PrJ9cZnt45xPDxzV2Gr5+/M7CzGcMTAUAAgR3wFxi0P3//Awfdv7//Gd69BMYpsDwXFOUHhooQuHR7/5WPYed5Xobzt18wfHijwPCLUw2YoJgZfgAT3R9WYHb8BQzPH8D8/48ZWCWzgcuO96/vMDy5fYjh7bOr4IKMkRko/v8nMCEjmnAAAXgoexyAgCgID5sQQYjdAhcQPe4fLqBXItkEDUInxhZO8ObvfUaAil3UpULba9O/4whC5OE7Mc7tgEwlIhlBELvLmRHJOQQPW3TnwYbPXQiXOQc0cNvY9Yxx6LBOvUngI6bF3ezHhTgJ0VTFL+AVQPBc8O3nX4ZF2+8wzNpwi+HqvQ8MHEBHsLKASjRQ2fCPgYubDegQcQZeYKEDKpT+ArMmSJITmOJ5WNgY2IC+/vrpDcPjm8cYnl4+yfALWEmxAEtMJmAC+PDhCwMvLxeDl7spQ2l+CIOhvgo8FwAEEEY58ObjT4aZG24yLNh6h+HB8y/A0o0FGJeM4PoeVOvx8HEBCyMhYLXLB/QZ0NdMrAx/vn1k+HLvHMPLW8cYvn99x8DyH1hK/gBF6y9wC8nGQouhGGixq6MhRrkHEECMuDomD158YZi65gbDyj0PGF68/cbAy8kMtvD/v7/gMp9PiJ9BSFSA4dvb+wxPrx1k+Pn+KQMHMKsxAeuOX1/+Mnz/8hMc1IU5QQwhgbYMTNgrpv8AAcRIqGd0+e4Hhu5lVxi2HnnE8BVYWIEcAk64wFTA8P0Zw9dHu4Gp/j8DOyswe/7+y/ADmMC0lBQY0uM8GZLiPBg4Odnw1rMAAcRIbNds37kXDP0rrjEcOvec4Q8wp3AAm1+MP54wfH28j+EXMAf9A1qsKCPOEB/hxpCd6McgIsxHVEUPEECMpPQNQSrXHXzAMGnVDYZT1z8wsPx+xvDlznYGXn5ehthgZ4aS9GAGRXkJUtq5/wECiJGczul3YI5ZuOM+w5xVhxik2J8wVGaHMlgaa5LTvfgPEECMlPSOv/34DayQWBkoAP8BAgjkAFCzhZFhYMBfgAADALVbMxmmc+02AAAAAElFTkSuQmCC"];
+      const favIcon = favIcons[Math.floor(Math.random() * favIcons.length)];
+      var docHead = document.getElementsByTagName('head')[0];
+      var newLink = document.createElement('link');
+      newLink.rel = 'shortcut icon';
+      newLink.type = 'image/x-icon';
+      newLink.href = 'data:image/png;base64,'+favIcon;
+      docHead.appendChild(newLink);
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Yesteryear&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <style>
+      html { }
+      body {
+        min-height:650px; max-height:650px;
+        margin:80px 0px 0px 0px; padding:0px 50px 0px 50px;
+        text-align:center;
+        background-color:#FFFFFF;
+      }
+      a { text-decoration:none; }
+      a:hover { text-decoration:none; color:#000000; }
+      .noselect {
+        -webkit-touch-callout:none; /* iOS Safari */
+          -webkit-user-select:none; /* Safari */
+           -khtml-user-select:none; /* Konqueror HTML */
+             -moz-user-select:none; /* Old versions of Firefox */
+              -ms-user-select:none; /* Internet Explorer/Edge */
+                  user-select:none; /* Non-prefixed version, currently
+                                       supported by Chrome, Edge, Opera and Firefox */
+      }
+      canvas {
+        width:94%; max-width:1260px; height:640px;
+        margin:auto;
+        background:#FFFFFF;
+        border:0px solid #FFFFFF;
+        cursor:pointer;
+      }
+      .logo {
+        display:none;
+        position:absolute;
+        font-family:'Yesteryear',sans-serif; font-size:80px;
+        color:#FCCA56;
+        pointer-events:none;
+      }
+      .links {
+        display:none;
+        position:absolute;
+        font-size:36px;
+        pointer-events:auto;
+      }
+      .links a { margin:0px 2px 0px 2px; font-weight:bold; color:#F2B849; }
+      .links a:hover { color:#FFFFFF; cursor:pointer; }
+      .icon {}
+      @media all and (max-width:900px) {
+        body { margin:0px; padding:0px 50px 0px 50px; }
+        .logo { color:#DBA744; }
+        .links a { color:#9D9D9D; }
+        .links a:hover { color:#DBA744; }
+      }
+    </style>
+    <script src="retroscapes.js"></script>
+    <script>
+      function App() {
+        /* Example application demonstrating use of the retroscapes library
+           to render the interactive splash landscape.
+         */
+
+        // Import utilized classes from the retroscapes library.
+        const Feed = retroscapes.Feed;
+        const Color = retroscapes.Color;
+        const Concept = retroscapes.Concept;
+        const Scape = retroscapes.Scape;
+        const Geometry = retroscapes.Geometry;
+        const Effect = retroscapes.Effect;
+        const Canvas = retroscapes.Canvas;
+        const Render = retroscapes.Render;
+
+        // Internal variables.
+        this.center = {"x": null, "y": null};
+        this.feed = new Feed({
+          "quantity": 32, "d": 8,
+          "pAnchor": 0.03, "pTethered": 0.9
+        });
+
+        // Internal classes and methods.
+        const self = this;
+
+        class Square extends Effect {
+          calc(coordinates, grid) {
+            const cs = (grid) ?
+                this.projection.getOffsetFromCenterGrid(coordinates) :
+                this.projection.canvasToPlaneGrid(coordinates);
+            cs.x -= 3;
+            cs.y -= 3;
+            const unit = 40 / this.projection.unit;
+            const aspect = this.projection.aspect();
+            var distance = Math.floor(
+              0.88 * unit * (this.projection.dimensions.width / 100)
+            );
+            const start = 0.8;
+            const end = 0.8;
+            const slope = 0;
+            const aDist = Math.abs((cs.y + (slope * cs.x))/(distance * end));
+            const bDist = Math.abs((cs.x + (slope * cs.y))/(distance * end));
+            return [start, aDist, bDist];
+          }
+
+          render(coordinates) {
+            const calculated = this.calc(coordinates, true);
+            const start = calculated[0], aDist = calculated[1], bDist = calculated[2];
+            return (
+              (aDist < start && bDist < start) ?
+              true :
+              Math.abs(
+                (aDist > bDist) ?
+                100 * ((aDist - start)/(1 - start)) :
+                100 * ((bDist - start)/(1 - start))
+              ) < 100
+            );
+          }
+        }
+
+        function geometry() {
+          return new Geometry({
+            "orientation": {"tilt": 30},
+            "unit": 30, //12
+          });
+        }
+
+        function determineCenter() {
+          const ps = new URLSearchParams(window.location.search);
+          const x = ps.get("x"), y = ps.get("y");
+          self.center = {
+            "x": (x != null) ? parseInt(x) : Math.floor(Math.random() * 10000),
+            "y": (y != null) ? parseInt(y) : Math.floor(Math.random() * 10000)
+          };
+          return self.center;
+        }
+
+        function getProjection() {
+          return self.projection;
+        }
+
+        function setProjection(projection) {
+          self.projection = projection;
+          self.render.setProjection(projection);
+        }
+
+        function initialize() {
+          self.scapes = build();
+          self.projection = geometry();
+          new Canvas(
+            document.getElementById('canvas'),
+            getProjection,
+            function () { refill(); }
+          );
+
+          self.render = new Render({
+            "canvas": document.getElementById('canvas'),
+            "feed": self.feed,
+            "projection": getProjection(),
+            "background": new Color([255, 255, 255]),
+            "light": {"top":20, "left":-15, "right":-60},
+            "effects": [new Square(getProjection)],
+            "precedence": false
+          });
+
+          draw();
+        }
+
+        function alignment(vps, callback) {
+          var bounds = {"xMin": null, "xMax": null, "yMin": null, "yMax": null};
+          for (var i = 0; i < vps.length; i++) {
+            if (vps[i].v.coordinates.z == 0) {
+              const x = vps[i].p.coordinates.x, y = vps[i].p.coordinates.y;
+              bounds.xMin = (bounds.xMin == null) ? x : Math.min(x, bounds.xMin);
+              bounds.yMin = (bounds.yMin == null) ? y : Math.min(y, bounds.yMin);
+              bounds.xMax = (bounds.xMax == null) ? x : Math.max(x, bounds.xMax);
+              bounds.yMax = (bounds.yMax == null) ? y : Math.max(y, bounds.yMax);
+            }
+          }
+          // Determine the dimensinons of the canvas element.
+          const canvasElement = document.getElementById("canvas");
+          canvasElement.style.marginLeft = '0px';
+          canvasElement.style.marginTop = '0px';
+          const canvasRect = canvasElement.getBoundingClientRect();
+
+          // Useful terms for the calculations below.
+          const xLen = bounds.xMax - bounds.xMin;
+          const yLen = bounds.yMax - bounds.yMin;
+          const canvasWidthHalf = canvasRect.width / 2;
+          const canvasMidX = canvasRect.left + canvasWidthHalf;
+
+          // Shift the canvas element to accommodate for the extent to which
+          // the rendered landscape deviates from the exact center of the canvas.
+          const xMid = bounds.xMin + (0.5 * xLen);
+          const xOffset = 2 * ((0.5 * canvasRect.width) - xMid);
+          const yMid = bounds.yMin + (0.5 * yLen);
+          const yOffset = (0.5 * canvasRect.height) - yMid;
+          canvasElement.style.marginLeft = xOffset + 'px';
+          canvasElement.style.marginTop = yOffset + 'px';
+          
+          if (callback != null) {
+            callback(xLen, yLen, canvasRect);
+          }
+        }
+
+        function navigation(xLen, yLen, canvasRect) {
+          // Useful terms for the calculations below.
+          const canvasWidthHalf = canvasRect.width / 2;
+          const canvasMidX = canvasRect.left + canvasWidthHalf;
+
+          // Shift the navigation elements (logo and links) based on the
+          // position of the rendered landscape.
+          const logo = document.getElementById("logo");
+          const links = document.getElementById("links");
+          if (window.innerWidth > 900) {
+            const logoTop = (canvasRect.height / 2) + 54;
+            const logoLeft = canvasMidX - (xLen / 2) - 28;
+            const linksTop = logoTop - 12;
+            const linksLeft =  canvasRect.right - canvasWidthHalf + (0.985 * yLen) - 75;
+
+            logo.style.position = 'absolute';
+            logo.style.left = logoLeft + 'px';
+            logo.style.top = logoTop + 'px';
+            logo.style.fontSize = '80px';
+            logo.style.transform = 'rotate(26.5deg) skew(25deg)';
+            logo.style.filter = 'drop-shadow(4px -3px 0px #000000)';
+
+            links.style.position = 'absolute';
+            links.style.float = 'right';
+            links.style.left = linksLeft + 'px';
+            links.style.top = linksTop + 'px';
+            links.style.fontSize = '42px';
+            links.style.fontWeight = 'bold';
+            links.style.transform = 'rotate(-28deg) skew(-28deg)';
+            links.style.filter = 'drop-shadow(-4px -3px 0px #000000)';
+          } else {
+            const logoTop = canvasRect.height - 285 + 0.5 * yLen;
+            const logoLeft = canvasRect.left + (canvasRect.width / 2) - 110;
+            const linksTop = logoTop + 65;
+            const linksLeft = canvasRect.left + (canvasRect.width / 2) + 55;
+
+            logo.style.position = 'absolute';
+            logo.style.float = 'none';
+            logo.style.left = logoLeft + 'px';
+            logo.style.top = logoTop + 'px';
+            logo.style.fontSize = '60px';
+            logo.style.fontWeight = 'normal';
+            logo.style.transform = 'none';
+            logo.style.filter = 'drop-shadow(2px 2px 1px #000000)';
+
+            links.style.position = 'absolute';
+            links.style.float = 'none';
+            links.style.left = linksLeft + 'px';
+            links.style.top = linksTop + 'px';
+            links.style.fontSize = '26px';
+            links.style.fontWeight = 'normal';
+            links.style.transform = 'none';
+            links.style.filter = 'drop-shadow(1px 1px 1px #000000)';
+          }
+          logo.style.display = 'block';
+          links.style.display = 'block';
+        }
+
+        function reinitialize() {
+          const center = getProjection().getCenter();
+          setProjection(geometry());
+          const vps = self.render.render(center, self.scapes, self.feed);
+          alignment(vps, navigation);
+        }
+
+        function draw() {
+          const center = determineCenter();
+          document.getElementById("canvas").style.opacity = 0;
+          document.getElementById("logo").style.opacity = 0;
+          document.getElementById("links").style.opacity = 0;
+          const vps = self.render.render(center, self.scapes, self.feed);
+          alignment(vps, navigation);
+          document.getElementById("canvas").style.opacity = 1;
+          self.render.renderGradually(
+            center,
+            self.scapes,
+            self.feed,
+            function () {
+              document.getElementById("logo").style.opacity = 1;
+              document.getElementById("links").style.opacity = 1;
+              reinitialize();
+            }
+          );
+        }
+
+        function refill() {
+          // On a click of the landscape, redraw it.
+          if (!self.render.rendering) {
+            setProjection(geometry());
+            draw();
+          }
+        }
+
+        function setUrl() {
+          window.location.search = "?x=" + self.center.x + "&y=" + self.center.y;
+        }
+
+        function build() {
+          const ecru = new Color([155, 165, 120]), black = new Color([0, 0, 0]);
+
+          const block = new Concept({
+            "type": "atom",
+            "dimensions": {"height": 1},
+            "form": {"shape": "prism"},
+            "surface": {"type": "solid", "color": ecru.lighter(50)},
+            "coordinates": {"z": 0, "o": 0}
+          });
+
+          const ground = new Concept({
+            "type": "atom",
+            "dimensions": {"height": 0},
+            "form": {"shape": "prism"},
+            "surface": {"type": "solid", "color": ecru.lighter(50)},
+            "coordinates": {"z": 1, "o": 0}
+          });
+
+          const building = new Concept({
+            "base": new Concept({
+              "type": "atom",
+              "dimensions": {},
+              "form": {"shape": "prism"},
+              "surface": {
+                "type": "solid",
+                "stroke": {"color": black, "lineWidth": 0.5, "lineDash": []},
+              },
+              "coordinates": {"z": 1, "o": 1}
+            }),
+            "tower": new Concept({
+              "type": "atom",
+              "dimensions": {},
+              "form": {"shape": "prism"},
+              "surface": {
+                "type": "solid",
+                "stroke": {"color": black, "lineWidth": 0.5, "lineDash": []},
+              },
+              "coordinates": {"z": 0, "o": 2}
+            })
+          });
+
+          const shore = new Concept({
+            "type": "atom",
+            "dimensions": {"height": 0.2},
+            "form": {"shape": "prism"},
+            "surface": {
+              "mesial": {"type": "solid", "color": ecru},
+              "lateral": {"type": "solid", "color": ecru},
+              "top": {
+                "type": "solid",
+                "color": ecru,
+                "stroke": {"color": ecru.lighter(30), "lineWidth": 1.05, "lineDash": []},
+              }
+            },
+            "coordinates": {"z": 1, "o": 0}
+          });
+
+          const ocean = new Concept({
+            "type": "atom",
+            "dimensions": {"height": 1},
+            "form": {"shape": "prism"},
+            "surface": {"type": "solid", "color": new Color([30, 90, 195])},
+            "coordinates": {"z": 0, "o": 0},
+            "scales": {"x": 1, "y": 1, "z": 1}
+          });
+
+          class Example extends Scape {
+            render() {
+              return ["world"];
+            }
+
+            world(cs, fr) {
+              cs = this.coordinates(cs);
+              if (this.isCity(fr)) {
+                return this.isIsolated(fr) ? this.shore(cs, fr) : this.city(cs, fr);
+              } else {
+                return this.isShore(fr) ? this.shore(cs, fr) : this.ocean(cs, fr);
+              }
+            }
+
+            city(cs, fr) {
+              const fc = fr.center();
+
+              var block_ = block.instance();
+              block_.$.coordinates.update(cs);
+              block_.$.feed = fc;
+              block_.setColor(
+                new Color(block_.$.surface.color).nearby(16, fc.randReals(3)).darker(20)
+              );
+
+              var ground_ = ground.instance();
+              ground_.$.coordinates.update(cs);
+              ground_.$.feed = fc;
+
+              var building_ = building.instance();
+              building_.$.coordinates = cs;
+              building_.base.$.feed = fr.up();
+              building_.tower.$.feed = fr.down();
+              const hMax = !this.isIsolated(fr) ? (this.isSurrounded(fr) ? 3 : 1) : 1;
+              building_.tower.$.dimensions.height =
+                1 + (hMax * (fc.randReal([cs.x, 2 * cs.y])));
+              const baseHeight =
+                0.2 + 0.3 * (fc.randReal([cs.x + 3 * cs.y, 7 * cs.y]));
+              const offsetsBase = {
+                "x": -1 + (2 * fc.randReal([cs.x])),
+                "y": -1 + (2 * fc.randReal([cs.y]))
+              };
+              building_.base.$.coordinates.z = 1;
+              building_.base.$.dimensions.height = baseHeight;
+              building_.base.$.scales.update({
+                "x": 1 - (0.4 * fc.randReal([cs.x])),
+                "y": 1 - (0.4 * fc.randReal([cs.y]))
+              });
+              building_.base.$.offsets.update(offsetsBase);
+              building_.base.$.surface.color =
+                new Color([155, 165, 175]).nearby(10, fr.left().randReals(3));
+
+              const scaleBound = 0.7 * fc.randReal([cs.x]);
+              building_.tower.$.coordinates.z = 1 + baseHeight;
+              building_.tower.$.scales.update({
+                "x": 1 - 0.1 - (scaleBound),
+                "y": 1 - 0.1 - (
+                  ((1 - (scaleBound / 0.7)) * 0.5) + (0.2 * fc.randReal([cs.y]))
+                )
+              });
+              building_.tower.$.offsets.update({
+                "x": 0.7 * offsetsBase.x,
+                "y": 0.7 * offsetsBase.y
+              });
+              building_.tower.$.surface.color =
+                new Color(building_.base.$.surface.color).nearby(
+                  10, fr.right().randReals(3)
+                );
+
+              return [block_, ground_, building_];
+            }
+
+            shore(cs, fr) {
+              const c = new Color([155, 165, 120]).lighter(50);
+
+              var block_ = block.instance();
+              block_.$.coordinates.update(cs);
+              block_.$.feed = fr.center();
+              block_.setColor(
+                new Color(c).nearby(16, fr.center().randReals(3)).darker(20)
+              );
+
+              var shore_ = shore.instance();
+              shore_.$.coordinates.update(cs);
+              shore_.$.feed = fr.center();
+              shore_.setColor(new Color(c).nearby(10, fr.center().randReals(3)));
+
+              return [block_, shore_];
+            }
+
+            ocean(cs, fr) {
+              var ocean_ = ocean.instance();
+              ocean_.$.coordinates.update(cs);
+              ocean_.$.feed = fr.center();
+              ocean_.setColor(
+                new Color(ocean_.$.surface.color).nearby(12, fr.center().randReals(3))
+              );
+
+              return [ocean_];
+            }
+
+            isCity(fx) {
+              return fx.randBoolWithProb(0.11);
+            }
+
+            isIsolated(fr) {
+              return this.isCity(fr) && fr.noneOnAxes(this.isCity);
+            }
+
+            isSurrounded(fr) {
+              return this.isCity(fr) && fr.allOnAxes(this.isCity);
+            }
+
+            isShore(fr) {
+              return !this.isCity(fr) && fr.countOnRing(this.isCity) > 0;
+            }
+          }
+
+          return new Example();
+        }
+
+        // Methods exported by the `App` class.
+        return {
+          "initialize": initialize,
+          "reinitialize": reinitialize,
+          "setUrl": setUrl
+        };
+      }
+
+      // Create an instance of the app used for the splash landscape.
+      const splash = new App();
+
+      // Handle events.
+      window.onresize = function() {
+        splash.reinitialize();
+      };
+    </script>
+  </head>
+  <body onload="splash.initialize();">
+    <canvas id="canvas"></canvas>
+    <div class="logo noselect" id="logo">retroscapes</div>
+    <div class="links noselect" id="links">
+      <span class="icon">
+        <a href="javascript: void(0)" onclick="splash.setUrl();">
+          <i class="far fa-compass"></i>
+        </a>
+      </span>
+      <span class="icon">
+        <a href="https://github.com/retroscapes">
+          <i class="fab fa-github"></i>
+        </a>
+      </span>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+  </body>
+</html>
