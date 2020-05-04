@@ -323,6 +323,14 @@
       }
       return vs.join(",");
     }
+
+    add(other) {
+      return new Vector({"x": this.x + other.x, "y": this.y + other.y});
+    }
+
+    sub(other) {
+      return new Vector({"x": this.x - other.x, "y": this.y - other.y});
+    }
   }
 
   class Color extends Array {
@@ -666,19 +674,96 @@
     }
   }
 
+  class Interaction {
+    /** Base class for canvas interactions.
+     */
+  }
+
+  class InteractionDrag extends Interaction {
+    constructor(canvas) {
+      super();
+      this.canvas = canvas;
+      this.active = false;
+      this.start = null;
+      this.center = null;
+      this.last = {};
+    }
+
+    move(e) {
+      const cursor = this.canvas.getCursorPosition(e);
+      if (this.active) {
+        const c = this.center.add(cursor.sub(this.start));
+
+        // Scroll only by whole grid cells.
+        const du = 1;
+        const p = this.canvas.projection();
+        c.x = Math.floor(c.x / (p.uX * 2 * du)) * (p.uX * 2 * du);
+        c.y = Math.floor(c.y / (p.uY * 2 * du)) * (p.uY * 2 * du);
+
+        // Only return the new center if an update occurred.
+        if (this.last.x != c.x || this.last.y != c.y) {
+          this.canvas.update(c);
+        }
+        this.last = c;
+      }
+    }
+
+    begin(e) {
+      this.active = true;
+      this.start = this.canvas.getCursorPosition(e);
+      this.center = this.canvas.projection().getCenter();
+      this.canvas.canvas.style.cursor = "grabbing";
+    }
+
+    end(e) {
+      this.active = false;
+      this.start = null;
+      this.center = null;
+      this.canvas.canvas.style.cursor = "grab";
+    }
+  }
+
   // Wrapper class for a canvas element.
   class Canvas {
-    constructor(canvas, projection, click) {
+    constructor(canvas, projection, update, click) {
       this.projection = projection;
       this.canvas = canvas;
+      this.update = update;
       this.click = click;
 
       const self = this;
       this.canvas.addEventListener('click', function(e) { self.eventOnClick(e); });
+      this.canvas.addEventListener('mousemove', function(e) { self.eventOnMouseMove(e); });
+      this.canvas.addEventListener('mousedown', function(e) { self.eventOnMouseDown(e); });
+      this.canvas.addEventListener('mouseup', function(e) { self.eventOnMouseUp(e); });
+
+      // Initialize interactions.
+      this.interactionDrag = new InteractionDrag(self);
+    }
+
+    getCursorPosition(event) {
+      const rect = this.canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      return new Vector({"x": x, "y": y});
     }
 
     eventOnClick(e) {
-      this.click();
+      if (this.click != null) {
+        this.click();
+      }
+    }
+
+    eventOnMouseMove(e) {
+      this.interactionDrag.move(e);
+    }
+
+    eventOnMouseDown(e) {
+      this.interactionDrag.begin(e);
+    }
+
+    eventOnMouseUp(e) {
+      this.interactionDrag.end(e);
     }
   }
 

@@ -44,7 +44,7 @@
         margin:auto;
         background:#FFFFFF;
         border:0px solid #FFFFFF;
-        cursor:pointer;
+        cursor:grab;
       }
       .logo {
         display:none;
@@ -160,10 +160,10 @@
         function initialize() {
           self.scapes = build();
           self.projection = geometry();
-          new Canvas(
+          self.canvas = new Canvas(
             document.getElementById('canvas'),
             getProjection,
-            function () { refill(); }
+            function (center) { redraw(center); }
           );
 
           self.render = new Render({
@@ -210,7 +210,7 @@
           const yOffset = (0.5 * canvasRect.height) - yMid;
           canvasElement.style.marginLeft = xOffset + 'px';
           canvasElement.style.marginTop = yOffset + 'px';
-          
+
           if (callback != null) {
             callback(xLen, yLen, canvasRect);
           }
@@ -301,16 +301,18 @@
           );
         }
 
-        function refill() {
-          // On a click of the landscape, redraw it.
-          if (!self.render.rendering) {
-            setProjection(geometry());
-            draw();
-          }
+        function redraw(center) {
+          setProjection(geometry());
+          const c = (center == null) ? determineCenter() : center;
+          const vps = self.render.render(c, self.scapes, self.feed);
+          alignment(vps, navigation);
+          self.render.render(center, self.scapes, self.feed);
+          reinitialize();
         }
 
         function setUrl() {
-          window.location.search = "?x=" + self.center.x + "&y=" + self.center.y;
+          const c = self.canvas.projection().getCenter();
+          window.location.search = "?x=" + Math.floor(c.x) + "&y=" + Math.floor(c.y);
         }
 
         function build() {
