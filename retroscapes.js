@@ -200,7 +200,6 @@
       this.xNeg = [sha256('b')];
       this.yPos = [sha256('c')];
       this.yNeg = [sha256('d')];
-      this.cache = {};
       this.configuration = configuration;
       this.cacheFeedCells = {};
       this.cacheFeedRegions = {};
@@ -723,6 +722,43 @@
     }
   }
 
+  class Cache {
+    constructor(parameters) {
+      this.time = (parameters.time == null) ? 100 : parameters.time;
+      this.scapes = [];
+    }
+
+    initialize(n) {
+      for (var i = 0; i < n; i++) {
+        this.scapes.push({});
+      }
+    }
+
+    update(i, key, es) {
+      this.scapes[i][key] = {
+        "es": es,
+        "time": this.time
+      }
+    }
+
+    lookup(i, key) {
+      if (key in this.scapes[i]) {
+        return this.scapes[i][key];
+      }
+    }
+
+    refresh() {
+      for (var i = 0; i < this.scapes.length; i++) {
+        for (var j in this.scapes[i]) {
+          this.scapes[i][j].time -= 1;
+          if (this.scapes[i][j].time <= 0) {
+            delete this.scapes[i][j];
+          }
+        }
+      }
+    }
+  }
+
   // Wrapper class for a canvas element.
   class Canvas {
     constructor(canvas, projection, update, click) {
@@ -792,7 +828,11 @@
       }
 
       // Rendering pipeline parameters.
+      this.cache = (parameters.cache == null) ? false : parameters.cache;
       this.precedence = (parameters.precedence == null) ? false : parameters.precedence;
+
+      // Cache for pre-processed expressions in the rendering pipeline.
+      this.cache_ = new Cache({"time": 10000});
 
       // State.
       this.rendering = false;
@@ -1078,7 +1118,7 @@
       return color;
     }
 
-    prepare(center, ss, fi) {
+    prepare(center, ss, fi, cache) {
       // Initialize the canvas.
       this.initialize(center);
 
@@ -1087,6 +1127,11 @@
 
       var vs = []; // Rendered instances.
       if (ss != null) {
+
+        if (cache && this.cache_.scapes.length != ss.render().length) {
+          this.cache_.initialize(ss.render().length);
+        }
+
         const self = this;
         for (var i = 0; i < ss.render().length; i++) {
           const scape = ss.render()[i];
@@ -1107,9 +1152,32 @@
               // Apply coordinate transformation, if one was supplied.
               const coordinates_ = ss.coordinates(coordinates);
 
-              // Either re-prepare or use the cache when possible.
-              fr = self.feed.feedRegionAt(coordinates_);
-              es = self.instances(ss[scape](coordinates, fr));
+              // Determine whether the use the rendering cache.
+              if (!cache) {
+                // Either re-prepare the feed or use the feed cache when possible.
+                fr = self.feed.feedRegionAt(coordinates_);
+
+                // Evaluate the concept expressions into concrete instances.
+                es = self.instances(ss[scape](coordinates, fr));
+
+              } else {
+                // Determine the cache key for these grid coordinates
+                // and check if a cache entry exists.
+                const cacheKey = coordinates.toCSV();
+                const entry = self.cache_.lookup(i, cacheKey);
+                if (entry != null) {
+                  es = entry.es;
+                } else {
+                  // Either re-prepare the feed or use the feed cache when possible.
+                  fr = self.feed.feedRegionAt(coordinates_);
+
+                  // Evaluate the concept expressions into concrete instances
+                  // and update the cache.
+                  es = self.instances(ss[scape](coordinates, fr));
+                  self.cache_.update(i, cacheKey, es);
+
+                }
+              }
 
               // Add the evaluated instances to the pipeline.
               for (var j = 0; j < es.length; j++) {
@@ -1121,6 +1189,9 @@
           });
         }
       }
+
+      // Remove older data from the cache.
+      this.cache_.refresh();
 
       // Sort values so that they are rendered with correct occlusions.
       // Precedence of the `x` and `y` dimensions does not matter, so choose
@@ -1142,10 +1213,14 @@
       return vs;
     }
 
-    render(center, ss, fi, precedence) {
+    render(center, ss, fi, precedence, cache) {
+      // Set default values for optional parameters.
+      cache = (cache == null) ? this.cache : cache;
       precedence = (precedence == null) ? this.precedence : precedence;
-      this.bounds = {"xMin": null, "yMin": null, "xMax": null, "yMax": null};
-      const vs = this.prepare(center, ss, fi), vps = [];
+
+      // Prepare and assemble the collection of evaluated instances based on
+      // the supplied rendering parameters.
+      const vs = this.prepare(center, ss, fi, cache), vps = [];
       if (!precedence) {
         for (var i = 0; i < vs.length; i++) {
           const v = vs[i];
