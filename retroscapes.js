@@ -1072,6 +1072,83 @@
       return p;
     }
 
+    bubble(coordinates, r, s, i, v) {
+      const x_ = coordinates.x, y_ = coordinates.y;
+      const surface = v.surface;
+      const c_ = surface[surface.type](v.feed, [i, v.coordinates.x, v.coordinates.y]);
+      const c0_ =
+        new Color(c_).lighterOrDarker(
+          (this.light.left + this.light.top) / 2,
+          surface.lit
+        );
+      const c1_ =
+        new Color(c_).lighterOrDarker(
+            (this.light.left + this.light.right) / 2,
+            surface.lit
+        );
+      const c0 = this.effectsOnColor(c0_, {"x": x_, "y": y_});
+      const c1 = this.effectsOnColor(c1_, {"x": x_, "y": y_});
+      var grd = this.context.createRadialGradient(
+        x_ - (s / 5), y_ - (s / 5), s / 6, x_, y_, s
+      );
+      grd.addColorStop(0, new Color(c0).rgba());
+      grd.addColorStop(1, new Color(c1).rgba());
+      const s_ = s * 0.8;
+      this.context.fillStyle = grd;
+      this.context.strokeStyle = "rgba(0,0,0,0)";
+
+      const angles = (v.surface.angles == null) ? [0, 2 * Math.PI] : v.surface.angles;
+      this.context.beginPath();
+      this.context.arc(x_, y_, 0.7 * r, angles[0], angles[1], false);
+      this.context.fill();
+
+      if ("stroke" in v.surface) {
+        this.stroke(v.surface, coordinates);
+      }
+    }
+
+    cloud(v) {
+      const g = this.projection;
+      const p = this.project(v);
+      const sx = (v.scales != null && v.scales.x != null) ? v.scales.x : 1;
+      const sy = (v.scales != null && v.scales.y != null) ? v.scales.y : 1;
+      const ox = (v.offsets != null && v.offsets.x != null) ? v.offsets.x : 1;
+      const oy = (v.offsets != null && v.offsets.y != null) ? v.offsets.y : 1;
+      const h = v.dimensions.height == null ? 1 : v.dimensions.height;
+      const x = p.coordinates.x + (ox * ((1 - sx) / 2));
+      const y = p.coordinates.y + (oy * ((1 - sy) / 2)) - (g.uZ * h) + (g.uY / 2);
+      const r =
+        (v.dimensions.radius * g.uX) /
+        ((2 * Math.sqrt(v.dimensions.quantity)) / 3);
+      const spread = (v.dimensions.spread != null) ? v.dimensions.spread : 1;
+      const spread_x = sx * spread, spread_y = sy * spread;
+      for (var i = 0; i < v.dimensions.quantity; i++) {
+        var df =
+          (v.dimensions.positional === true) ?
+            (
+              Math.abs((v.coordinates.x * 3) +
+              (v.coordinates.y * 7) + (v.coordinates.x * v.coordinates.y))
+            ) :
+            0;
+        var dx =
+          (1.7) * (
+            (-0.5 * g.uX) +
+            ((v.feed[((2*i) + df) % v.feed.length] / 255) * g.uX)
+          );
+        var dyf = v.feed[(((3 * i) + 1) + df) % v.feed.length] / 255;
+        var dzf = v.feed[(((2 * i) + 1) + df) % v.feed.length] / 255;
+        var dy = dzf * g.uZ * h + ((-g.uY / 2) + (g.uY * dyf));
+        var dr = 0.75 + 0.5 * (v.feed[((2 * i + 2) + df) % v.feed.length] / 255);
+        this[v.form.particle](
+          {
+            "x": x + (spread_x * dx),
+            "y": y + (spread_y * dy)
+          },
+          r, r * dr, i, v
+        );
+      }
+    }
+
     instances(e, es, attrs) {
       es = (es == null) ? [] : es;
       attrs = (attrs == null) ? {} : attrs;

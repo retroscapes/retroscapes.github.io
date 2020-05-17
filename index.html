@@ -383,6 +383,26 @@
             "scales": {"x": 1, "y": 1, "z": 1}
           });
 
+          const foam = new Concept({
+            "type": "atom",
+            "dimensions": {
+              "height": 0, "quantity": 2, "radius": 0.5, "spread": 0.6,
+              "positional": true
+            },
+            "form": {"shape": "cloud", "particle": "bubble"},
+            "surface": {
+              "type": "solid",
+              "color": new Color([0, 0, 0, 0]),
+              "stroke": {
+                "color": new Color([130, 150, 240]),
+                "lineWidth": 1,
+                "lineDash": []
+              },
+              "angles": [(1.5 * Math.PI) - .7, (1.5 * Math.PI) + .7]
+            },
+            "coordinates": {"z": 1, "o": 1}
+          });
+
           class Example extends Scape {
             render() {
               return ["world"];
@@ -391,7 +411,7 @@
             world(cs, fr) {
               cs = this.coordinates(cs);
               if (this.isCity(fr)) {
-                return this.isIsolated(fr) ? this.shore(cs, fr) : this.city(cs, fr);
+                return this.isCityIsolated(fr) ? this.shore(cs, fr) : this.city(cs, fr);
               } else {
                 return this.isShore(fr) ? this.shore(cs, fr) : this.ocean(cs, fr);
               }
@@ -415,7 +435,7 @@
               building_.$.coordinates = cs;
               building_.base.$.feed = fr.up();
               building_.tower.$.feed = fr.down();
-              const hMax = !this.isIsolated(fr) ? (this.isSurrounded(fr) ? 3 : 1) : 1;
+              const hMax = !this.isCityIsolated(fr) ? (this.isCitySurrounded(fr) ? 3 : 1) : 1;
               building_.tower.$.dimensions.height =
                 1 + (hMax * (fc.randReal([cs.x, 2 * cs.y])));
               const baseHeight =
@@ -480,23 +500,37 @@
                 new Color(ocean_.$.surface.color).nearby(12, fr.center().randReals(3))
               );
 
-              return [ocean_];
+              if (this.isOceanDeep(fr)) {
+                var foam_ = foam.instance();
+                foam_.$.coordinates.update(cs);
+                foam_.$.feed = fr.center();
+                return [ocean_, foam_];
+              } else {
+                return [ocean_];
+              }
             }
 
             isCity(fx) {
               return fx.randBoolWithProb(0.11);
             }
 
-            isIsolated(fr) {
+            isCityIsolated(fr) {
               return this.isCity(fr) && fr.noneOnAxes(this.isCity);
             }
 
-            isSurrounded(fr) {
+            isCitySurrounded(fr) {
               return this.isCity(fr) && fr.allOnAxes(this.isCity);
             }
 
             isShore(fr) {
               return !this.isCity(fr) && fr.countOnRing(this.isCity) > 0;
+            }
+
+            isOceanDeep(fr) {
+              return (
+                fr.relative(1, 1).randBoolWithProb(0.3) &&
+                fr.countAround(this.isCity) == 0
+              );
             }
           }
 
