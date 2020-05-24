@@ -1174,13 +1174,12 @@
             0;
         var dx =
           (1.7) * (
-            (-0.5 * g.uX) +
-            ((v.feed[((2*i) + df) % v.feed.length] / 255) * g.uX)
+            (-0.5 * g.uX) + (v.feed.randReal([(2 * i) + df]) * g.uX)
           );
-        var dyf = v.feed[(((3 * i) + 1) + df) % v.feed.length] / 255;
-        var dzf = v.feed[(((2 * i) + 1) + df) % v.feed.length] / 255;
+        var dyf = v.feed.randReal([((3 * i) + 1) + df]);
+        var dzf = v.feed.randReal([((2 * i) + 1) + df]);
         var dy = dzf * g.uZ * h + ((-g.uY / 2) + (g.uY * dyf));
-        var dr = 0.75 + 0.5 * (v.feed[((2 * i + 2) + df) % v.feed.length] / 255);
+        var dr = 0.75 + 0.5 * (v.feed.randReal([(2 * i + 2) + df]));
         this[v.form.particle](
           {
             "x": x + (spread_x * dx),
