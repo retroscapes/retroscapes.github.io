@@ -323,7 +323,9 @@
             "type": "atom",
             "dimensions": {"height": 1},
             "form": {"shape": "prism"},
-            "surface": {"type": "simple", "color": ecru.lighter(50)},
+            "look": {
+              "face": {"color": ecru.lighter(50)}
+            },
             "coordinates": {"z": 0, "o": 0}
           });
 
@@ -331,7 +333,9 @@
             "type": "atom",
             "dimensions": {"height": 0},
             "form": {"shape": "prism"},
-            "surface": {"type": "simple", "color": ecru.lighter(50)},
+            "look": {
+              "face": {"color": ecru.lighter(50)}
+            },
             "coordinates": {"z": 1, "o": 0}
           });
 
@@ -340,9 +344,9 @@
               "type": "atom",
               "dimensions": {},
               "form": {"shape": "prism"},
-              "surface": {
-                "type": "simple",
-                "stroke": {"color": black, "lineWidth": 0.5, "lineDash": []},
+              "look": {
+                "face": {},
+                "edge": {"color": black, "lineWidth": 0.5, "lineDash": []},
               },
               "coordinates": {"z": 1, "o": 1}
             }),
@@ -350,9 +354,9 @@
               "type": "atom",
               "dimensions": {},
               "form": {"shape": "prism"},
-              "surface": {
-                "type": "simple",
-                "stroke": {"color": black, "lineWidth": 0.5, "lineDash": []},
+              "look": {
+                "face": {},
+                "edge": {"color": black, "lineWidth": 0.5, "lineDash": []},
               },
               "coordinates": {"z": 0, "o": 2}
             })
@@ -362,14 +366,12 @@
             "type": "atom",
             "dimensions": {"height": 0.2},
             "form": {"shape": "prism"},
-            "surface": {
-              "mesial": {"type": "simple", "color": ecru},
-              "lateral": {"type": "simple", "color": ecru},
+            "look": {
+              "mesial": {"face": {"color": ecru}},
+              "lateral": {"face": {"color": ecru}},
               "top": {
-                "type": "simple",
-                "within": "15%",
-                "color": ecru.lighter(50),
-                "stroke": {"color": ecru.lighter(30), "lineWidth": 1.05, "lineDash": []},
+                "face": {"color": ecru.lighter(50), "within": "15%"},
+                "edge": {"color": ecru.lighter(30), "lineWidth": 1.05, "lineDash": []},
               }
             },
             "coordinates": {"z": 1, "o": 0}
@@ -379,10 +381,8 @@
             "type": "atom",
             "dimensions": {"height": 1},
             "form": {"shape": "prism"},
-            "surface": {
-              "type": "simple",
-              "within": "10%",
-              "color": new Color([30, 90, 195])
+            "look": {
+              "face": {"color": new Color([30, 90, 195]), "within": "10%"},
             },
             "coordinates": {"z": 0, "o": 0},
             "scales": {"x": 1, "y": 1, "z": 1}
@@ -395,10 +395,9 @@
               "positional": true
             },
             "form": {"shape": "cloud", "particle": "bubble"},
-            "surface": {
-              "type": "simple",
-              "color": new Color([0, 0, 0, 0]),
-              "stroke": {
+            "look": {
+              "face": {"color": new Color([0, 0, 0, 0])},
+              "edge": {
                 "color": new Color([130, 150, 240]),
                 "lineWidth": 1,
                 "lineDash": []
@@ -428,8 +427,8 @@
               var block_ = block.instance();
               block_.$.coordinates.update(cs);
               block_.$.feed = fc;
-              block_.setColor(
-                new Color(block_.$.surface.color).nearby(16, fc.randReals(3)).darker(20)
+              block_.setFaceColor(
+                new Color(block_.$.look.face.color).nearby(16, fc.randReals(3)).darker(20)
               );
 
               var ground_ = ground.instance();
@@ -456,7 +455,7 @@
                 "y": 1 - (0.4 * fc.randReal([cs.y]))
               });
               building_.base.$.offsets.update(offsetsBase);
-              building_.base.$.surface.color =
+              building_.base.$.look.face.color =
                 new Color([155, 165, 175]).nearby(10, fr.left().randReals(3));
 
               const scaleBound = 0.7 * fc.randReal([cs.x]);
@@ -471,8 +470,8 @@
                 "x": 0.7 * offsetsBase.x,
                 "y": 0.7 * offsetsBase.y
               });
-              building_.tower.$.surface.color =
-                new Color(building_.base.$.surface.color).nearby(
+              building_.tower.$.look.face.color =
+                new Color(building_.base.$.look.face.color).nearby(
                   10, fr.right().randReals(3)
                 );
 
@@ -483,7 +482,7 @@
               var block_ = block.instance();
               block_.$.coordinates.update(cs);
               block_.$.feed = fr.center();
-              block_.setColor(
+              block_.setFaceColor(
                 new Color([155, 165, 120]).lighter(50).nearby(
                   16, fr.center().randReals(3)
                 ).darker(20)
@@ -500,8 +499,8 @@
               var ocean_ = ocean.instance();
               ocean_.$.coordinates.update(cs);
               ocean_.$.feed = fr.center();
-              ocean_.setColor(
-                new Color(ocean_.$.surface.color).nearby(12, fr.center().randReals(3))
+              ocean_.setFaceColor(
+                new Color(ocean_.$.look.face.color).nearby(12, fr.center().randReals(3))
               );
 
               if (this.isOceanDeep(fr)) {

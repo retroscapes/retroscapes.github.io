@@ -446,7 +446,7 @@
     }
   }
 
-  class Surface {
+  class Look {
     constructor(o) {
       for (var a in o) {
         this[a] = o[a];
@@ -457,41 +457,45 @@
       return [this, this, this];
     }
 
-    setColor(c) {
-      this.color = c;
+    setEdge(s) {
+      this.edge = s;
     }
 
-    setStroke(s) {
-      this.stroke = s;
+    setFaceColor(c) {
+      this.face.color = c;
     }
 
-    _within(fx, args) {
+    setEdgeColor(c) {
+      this.edge.color = c;
+    }
+
+    _within(color, within, fx, args) {
       const s = this;
-      const range = parseInt(s.within.slice(0, -1));
+      const range = parseInt(within.slice(0, -1));
       var scale = 100 - (range / 2) + Math.round(fx.randReal(args) * range);
       var cs = [];
-      for (var i = 0; i < s.color.length; i++) {
+      for (var i = 0; i < color.length; i++) {
         if (i < 3) {
-          cs.push(Scalar.bounded(s.color[i] * (scale / 100), 0, 255));
+          cs.push(Scalar.bounded(color[i] * (scale / 100), 0, 255));
         } else {
-          cs.push(s.color[i]);
+          cs.push(color[i]);
         }
       }
       return cs;
     }
 
     paint(fx, args) {
-      if (this.within != null) {
-        return this._within(fx, args);
+      if (this.face.within != null) {
+        return this._within(this.face.color, this.face.within, fx, args);
       }
-      return this.color;
+      return this.face.color;
     }
   }
 
-  class Surfaces {
-    constructor(surfaces) {
-      for (var a in surfaces) {
-        this[a] = new Surface(surfaces[a]);
+  class LookComponents {
+    constructor(components) {
+      for (var a in components) {
+        this[a] = new Look(components[a]);
       }
     }
 
@@ -499,16 +503,16 @@
       return [this.mesial, this.lateral, this.top];
     }
 
-    setColor(c) {
-      this.mesial.color = c;
-      this.lateral.color = c;
-      this.top.color = c;
+    setFaceColor(c) {
+      this.mesial.face.color = c;
+      this.lateral.face.color = c;
+      this.top.face.color = c;
     }
 
-    setStroke(s) {
-      this.mesial.color = s;
-      this.lateral.color = s;
-      this.top.color = s;
+    setEdgeColor(c) {
+      this.mesial.edge.color = s;
+      this.lateral.edge,color = s;
+      this.top.edge.color = s;
     }
   }
 
@@ -520,14 +524,14 @@
         this.$.scales = new Vector((o.scales == null) ? {"x": 1, "y":1, "z": 1} : o.scales);
         this.$.offsets = new Vector((o.offsets == null) ? {"x": 0, "y":0, "z": 0} : o.offsets);
 
-        if (this.$.surface != null) {
-          this.$.surface = (
-              this.$.surface.top == null &&
-              this.$.surface.mesial == null &&
-              this.$.surface.lateral == null
+        if (this.$.look != null) {
+          this.$.look = (
+              this.$.look.mesial == null &&
+              this.$.look.lateral == null &&
+              this.$.look.top == null
             ) ?
-            new Surface(this.$.surface) :
-            new Surfaces(this.$.surface);
+            new Look(this.$.look) :
+            new LookComponents(this.$.look);
         }
       } else {
         for (var a in o) {
@@ -556,16 +560,16 @@
       return this.$.type != 'atom';
     }
 
-    setColor(c) {
+    setFaceColor(c) {
       if (this.isCompound()) {
         for (var a in this) {
-          if (this[a].setColor != null) {
-            this[a].setColor(c);
+          if (this[a].setFaceColor != null) {
+            this[a].setFaceColor(c);
           }
         }
       } else {
-        if (this.$.surface != null) {
-          this.$.surface.setColor(c);
+        if (this.$.look != null) {
+          this.$.look.setFaceColor(c);
         }
       }
     }
@@ -578,8 +582,8 @@
           }
         }
       } else {
-        if (this.$.surface != null) {
-          this.$.surface.setStroke(s);
+        if (this.$.look != null) {
+          this.$.look.setStroke(s);
         }
       }
     }
@@ -589,15 +593,18 @@
     constructor(o) {
       for (var a in o) {
         var v = o[a];
-        if (a == 'surface') {
-          v = (v.type != null) ? new Surface(v) : new Surfaces(v);
+        if (a == 'look') {
+          v =
+            (v.mesial == null && v.lateral == null && v.top == null) ?
+            new Look(v) :
+            new LookComponents(v);
         }
         this[a] = v;
       }
     }
 
-    surfaceComponents(order) {
-      return this.surface.components(order);
+    lookComponents(order) {
+      return this.look.components(order);
     }
   }
 
@@ -696,7 +703,7 @@
       return true;
     }
 
-    color(coordinates, color, stroke) {
+    color(coordinates, color, edge) {
       return color;
     }
   }
@@ -923,18 +930,18 @@
       };
     }
 
-    stroke(surface, coordinates) {
-      const stroke = surface.stroke;
-      const c_ = new Color(stroke.color);
+    edge(look, coordinates) {
+      const edge = look.edge;
+      const c_ = new Color(edge.color);
       const c = this.effectsOnColor(c_, coordinates, true);
       this.context.strokeStyle = c.rgb();
-      this.context.setLineDash(stroke.lineDash);
-      this.context.lineWidth = stroke.lineWidth;
+      this.context.setLineDash(edge.lineDash);
+      this.context.lineWidth = edge.lineWidth;
       this.context.stroke();
       this.context.setLineDash([]);
     }
 
-    prismEnd(surface, gs, v, p, scale, offset, color, bottom) {
+    prismEnd(look, gs, v, p, scale, offset, color, bottom) {
       const g = this.projection;
       var s = (scale == null) ? {"x":1, "y":1} : scale;
       var o = (offset == null) ? {"x":0, "y":0} : offset;
@@ -959,8 +966,8 @@
       if ( (shape.top.y < this.projection.dimensions.height || shape.bot.y > 0)
         && (shape.lft.x < this.projection.dimensions.width || shape.rgt.x > 0)
          ) {
-        var c_ = (color == null) ? surface.color : color;
-        c_ = new Color(c_).lighterOrDarker(this.light.top, surface.lit);
+        var c_ = (color == null) ? look.face.color : color;
+        c_ = new Color(c_).lighterOrDarker(this.light.top, look.lit);
         c_ = this.effectsOnColor(c_, p.coordinates);
         this.context.fillStyle = c_.rgba();
         this.context.strokeStyle = "rgba(0,0,0,0)";
@@ -973,17 +980,17 @@
         this.context.lineTo(shape.lft.x, shape.lft.y);
         this.context.fill();
 
-        if ("stroke" in surface) {
-          this.stroke(surface, p.coordinates);
+        if ("edge" in look) {
+          this.edge(look, p.coordinates);
         }
       }
     }
 
-    prismTop(surface, gs, v, p, scale, offset, color) {
-      this.prismEnd(surface, gs, v, p, scale, offset, color, false);
+    prismTop(look, gs, v, p, scale, offset, color) {
+      this.prismEnd(look, gs, v, p, scale, offset, color, false);
     }
 
-    prismLeft(surface, gs, v, p, scale, offset, color) {
+    prismLeft(look, gs, v, p, scale, offset, color) {
       const g = this.projection;
       const s = (scale == null) ? {"x":1, "y":1} : scale;
       const o = (offset == null) ? {"x":0, "y":0} : offset;
@@ -1009,8 +1016,8 @@
       if ( (shape.toplft.y < this.projection.dimensions.height || shape.botrgt.y > 0)
         && (shape.toplft.x < this.projection.dimensions.width || shape.botrgt.x > 0)
          ) {
-        var c_ = (color == null) ? surface.color: color;
-        c_ = new Color(c_).lighterOrDarker(this.light.left, surface.lit);
+        var c_ = (color == null) ? look.face.color: color;
+        c_ = new Color(c_).lighterOrDarker(this.light.left, look.lit);
         c_ = this.effectsOnColor(c_, p.coordinates);
         this.context.fillStyle = c_.rgb();
         this.context.strokeStyle = "rgba(0,0,0,0)";
@@ -1023,13 +1030,13 @@
         this.context.lineTo(shape.toplft.x, shape.toplft.y);
         this.context.fill();
 
-        if ("stroke" in surface) {
-          this.stroke(surface, p.coordinates);
+        if ("edge" in look) {
+          this.edge(look, p.coordinates);
         }
       }
     }
 
-    prismRight(surface, gs, v, p, scale, offset, color) {
+    prismRight(look, gs, v, p, scale, offset, color) {
       const g = this.projection;
       const s = (scale == null) ? {"x":1, "y":1} : scale;
       const o = (offset == null) ? {"x":0, "y":0} : offset;
@@ -1047,7 +1054,7 @@
       const omvsy = (1 - v.scales.y);
       const xo = gs.uX * omvsy;
       const yo = - gs.uY * (1 - v.scales.y);
-      const columns = (surface.columns == null) ? 1 : surface.columns;
+      const columns = (look.columns == null) ? 1 : look.columns;
       const sx = s.x * (1 + ((columns - 1) * (1 - v.scales.y)));
 
       const shape = {
@@ -1065,8 +1072,8 @@
       if ( (shape.toprgt.y < this.projection.dimensions.height || shape.botlft.y > 0)
         && (shape.botlft.x < this.projection.dimensions.width || shape.botrgt.x > 0)
          ) {
-        var c_ = (color == null) ? surface.color : color;
-        c_ = new Color(c_).lighterOrDarker(this.light.right, surface.lit);
+        var c_ = (color == null) ? look.face.color : color;
+        c_ = new Color(c_).lighterOrDarker(this.light.right, look.lit);
         c_ = this.effectsOnColor(c_, p.coordinates);
         this.context.fillStyle = c_.rgb();
         this.context.strokeStyle = "rgba(0,0,0,0)";
@@ -1079,8 +1086,8 @@
         this.context.lineTo(shape.toplft.x, shape.toplft.y);
         this.context.fill();
 
-        if ("stroke" in surface) {
-          this.stroke(surface, p.coordinates);
+        if ("edge" in look) {
+          this.edge(look, p.coordinates);
         }
       }
     }
@@ -1090,14 +1097,14 @@
       const p = this.project(v);
       var hs = [v.dimensions.height, v.dimensions.height, 1];
       var sides = ["prismLeft", "prismRight", "prismTop"];
-      var surfaces = v.surfaceComponents(true);
+      var lookComponents = v.lookComponents(true);
       for (var side = 0; side < sides.length; side++) {
-        var surface = surfaces[side];
+        var look = lookComponents[side];
         this[sides[side]](
-          surface, g, v, p,
+          look, g, v, p,
           {"x": 1, "y": 1},
           {"x": 0, "y": 0},
-          surface.paint(v.feed, [v.coordinates.x, v.coordinates.y])
+          look.paint(v.feed, [v.coordinates.x, v.coordinates.y])
         );
       }
       return p;
@@ -1105,21 +1112,21 @@
 
     bubble(coordinates, r, s, i, v) {
       const x_ = coordinates.x, y_ = coordinates.y;
-      const surface = v.surface;
+      const look = v.look;
       const c_ =
-        surface.paint(
+        look.paint(
           v.feed,
           [i, v.coordinates.x, v.coordinates.y]
         );
       const c0_ =
         new Color(c_).lighterOrDarker(
           (this.light.left + this.light.top) / 2,
-          surface.lit
+          look.lit
         );
       const c1_ =
         new Color(c_).lighterOrDarker(
             (this.light.left + this.light.right) / 2,
-            surface.lit
+            look.lit
         );
       const c0 = this.effectsOnColor(c0_, {"x": x_, "y": y_});
       const c1 = this.effectsOnColor(c1_, {"x": x_, "y": y_});
@@ -1132,13 +1139,13 @@
       this.context.fillStyle = grd;
       this.context.strokeStyle = "rgba(0,0,0,0)";
 
-      const angles = (v.surface.angles == null) ? [0, 2 * Math.PI] : v.surface.angles;
+      const angles = (v.look.angles == null) ? [0, 2 * Math.PI] : v.look.angles;
       this.context.beginPath();
       this.context.arc(x_, y_, 0.7 * r, angles[0], angles[1], false);
       this.context.fill();
 
-      if ("stroke" in v.surface) {
-        this.stroke(v.surface, coordinates);
+      if ("edge" in v.look) {
+        this.edge(v.look, coordinates);
       }
     }
 
@@ -1222,10 +1229,10 @@
       return es;
     }
 
-    effectsOnColor(color, coordinates, stroke) {
-      stroke = (stroke == null) ? false : stroke;
+    effectsOnColor(color, coordinates, edge) {
+      edge = (edge == null) ? false : edge;
       for (var i = 0; i < this.effects.length; i++) {
-        color = this.effects[i].color(coordinates, color, stroke);
+        color = this.effects[i].color(coordinates, color, edge);
       }
       return color;
     }
@@ -1391,8 +1398,8 @@
     "Feed": Feed,
     "Vector": Vector,
     "Color": Color,
-    "Surface": Surface,
-    "Surfaces": Surfaces,
+    "Look": Look,
+    "LookComponents": LookComponents,
     "Concept": Concept,
     "Instance": Instance,
     "Scape": Scape,
