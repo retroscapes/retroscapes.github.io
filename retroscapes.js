@@ -301,6 +301,12 @@
     }
   }
 
+  class Scalar {
+    static bounded(s, lo, hi) {
+      return Math.min(hi, Math.max(lo, s));
+    }
+  }
+
   class Vector {
     constructor(o) {
       this.update(o);
@@ -459,7 +465,25 @@
       this.stroke = s;
     }
 
-    solid(feed, args) {
+    _within(fx, args) {
+      const s = this;
+      const range = parseInt(s.within.slice(0, -1));
+      var scale = 100 - (range / 2) + Math.round(fx.randReal(args) * range);
+      var cs = [];
+      for (var i = 0; i < s.color.length; i++) {
+        if (i < 3) {
+          cs.push(Scalar.bounded(s.color[i] * (scale / 100), 0, 255));
+        } else {
+          cs.push(s.color[i]);
+        }
+      }
+      return cs;
+    }
+
+    paint(fx, args) {
+      if (this.within != null) {
+        return this._within(fx, args);
+      }
       return this.color;
     }
   }
@@ -497,7 +521,11 @@
         this.$.offsets = new Vector((o.offsets == null) ? {"x": 0, "y":0, "z": 0} : o.offsets);
 
         if (this.$.surface != null) {
-          this.$.surface = (this.$.surface.type != null) ?
+          this.$.surface = (
+              this.$.surface.top == null &&
+              this.$.surface.mesial == null &&
+              this.$.surface.lateral == null
+            ) ?
             new Surface(this.$.surface) :
             new Surfaces(this.$.surface);
         }
@@ -1065,9 +1093,12 @@
       var surfaces = v.surfaceComponents(true);
       for (var side = 0; side < sides.length; side++) {
         var surface = surfaces[side];
-        if (surface.type == "solid") {
-          this[sides[side]](surface, g, v, p, {"x": 1, "y": 1}, {"x": 0, "y": 0}, surface.solid());
-        }
+        this[sides[side]](
+          surface, g, v, p,
+          {"x": 1, "y": 1},
+          {"x": 0, "y": 0},
+          surface.paint(v.feed, [v.coordinates.x, v.coordinates.y])
+        );
       }
       return p;
     }
@@ -1075,7 +1106,11 @@
     bubble(coordinates, r, s, i, v) {
       const x_ = coordinates.x, y_ = coordinates.y;
       const surface = v.surface;
-      const c_ = surface[surface.type](v.feed, [i, v.coordinates.x, v.coordinates.y]);
+      const c_ =
+        surface.paint(
+          v.feed,
+          [i, v.coordinates.x, v.coordinates.y]
+        );
       const c0_ =
         new Color(c_).lighterOrDarker(
           (this.light.left + this.light.top) / 2,

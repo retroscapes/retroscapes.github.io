@@ -323,7 +323,7 @@
             "type": "atom",
             "dimensions": {"height": 1},
             "form": {"shape": "prism"},
-            "surface": {"type": "solid", "color": ecru.lighter(50)},
+            "surface": {"type": "simple", "color": ecru.lighter(50)},
             "coordinates": {"z": 0, "o": 0}
           });
 
@@ -331,7 +331,7 @@
             "type": "atom",
             "dimensions": {"height": 0},
             "form": {"shape": "prism"},
-            "surface": {"type": "solid", "color": ecru.lighter(50)},
+            "surface": {"type": "simple", "color": ecru.lighter(50)},
             "coordinates": {"z": 1, "o": 0}
           });
 
@@ -341,7 +341,7 @@
               "dimensions": {},
               "form": {"shape": "prism"},
               "surface": {
-                "type": "solid",
+                "type": "simple",
                 "stroke": {"color": black, "lineWidth": 0.5, "lineDash": []},
               },
               "coordinates": {"z": 1, "o": 1}
@@ -351,7 +351,7 @@
               "dimensions": {},
               "form": {"shape": "prism"},
               "surface": {
-                "type": "solid",
+                "type": "simple",
                 "stroke": {"color": black, "lineWidth": 0.5, "lineDash": []},
               },
               "coordinates": {"z": 0, "o": 2}
@@ -363,11 +363,12 @@
             "dimensions": {"height": 0.2},
             "form": {"shape": "prism"},
             "surface": {
-              "mesial": {"type": "solid", "color": ecru},
-              "lateral": {"type": "solid", "color": ecru},
+              "mesial": {"type": "simple", "color": ecru},
+              "lateral": {"type": "simple", "color": ecru},
               "top": {
-                "type": "solid",
-                "color": ecru,
+                "type": "simple",
+                "within": "15%",
+                "color": ecru.lighter(50),
                 "stroke": {"color": ecru.lighter(30), "lineWidth": 1.05, "lineDash": []},
               }
             },
@@ -378,7 +379,11 @@
             "type": "atom",
             "dimensions": {"height": 1},
             "form": {"shape": "prism"},
-            "surface": {"type": "solid", "color": new Color([30, 90, 195])},
+            "surface": {
+              "type": "simple",
+              "within": "10%",
+              "color": new Color([30, 90, 195])
+            },
             "coordinates": {"z": 0, "o": 0},
             "scales": {"x": 1, "y": 1, "z": 1}
           });
@@ -391,7 +396,7 @@
             },
             "form": {"shape": "cloud", "particle": "bubble"},
             "surface": {
-              "type": "solid",
+              "type": "simple",
               "color": new Color([0, 0, 0, 0]),
               "stroke": {
                 "color": new Color([130, 150, 240]),
@@ -475,19 +480,18 @@
             }
 
             shore(cs, fr) {
-              const c = new Color([155, 165, 120]).lighter(50);
-
               var block_ = block.instance();
               block_.$.coordinates.update(cs);
               block_.$.feed = fr.center();
               block_.setColor(
-                new Color(c).nearby(16, fr.center().randReals(3)).darker(20)
+                new Color([155, 165, 120]).lighter(50).nearby(
+                  16, fr.center().randReals(3)
+                ).darker(20)
               );
 
               var shore_ = shore.instance();
               shore_.$.coordinates.update(cs);
               shore_.$.feed = fr.center();
-              shore_.setColor(new Color(c).nearby(10, fr.center().randReals(3)));
 
               return [block_, shore_];
             }
