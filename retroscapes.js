@@ -484,11 +484,16 @@
       return cs;
     }
 
-    paint(fx, args) {
+    emitFaceColor(fx, args) {
       if (this.face.within != null) {
         return this._within(this.face.color, this.face.within, fx, args);
       }
       return this.face.color;
+    }
+
+    emitFacePatternColor(r, c, fx, args) {
+      args = (args == null) ? [] : args;
+      return this.emitFaceColor(fx, [r, c].concat(args));
     }
   }
 
@@ -1044,17 +1049,20 @@
       const o_ = {"x": o.x * v.scales.x, "y": o.y * v.scales.y};
       const yd = (p.dimensions.height * ((1 - v.scales.z)/2));
       const h = p.dimensions.height * v.scales.z;
-      const x = (g.uX * ((1 - v.scales.x)/2)) - (g.uX * ((1 - v.scales.y)/2)) +
-        p.coordinates.x - gs.uX + (o_.x/Math.SQRT2)        -
-        gs.uX*(1 - v.scales.x);
+      const x = (g.uX * ((1 - v.scales.x) / 2)) - (g.uX * ((1 - v.scales.y) / 2)) +
+        p.coordinates.x - gs.uX + (o_.x / Math.SQRT2)        -
+        gs.uX * (1 - v.scales.x);
       const y =
-        -((1 + v.offsets.z) * yd) + (g.uY * ((1 - v.scales.x)/2)) +
-        (g.uY * ((1 - v.scales.y)/2)) + p.coordinates.y + o_.y - (o_.x * g.tiltNorm) -
-        h    - gs.uY*(1 - v.scales.x);
+        -((1 + v.offsets.z) * yd) + (g.uY * ((1 - v.scales.x) / 2)) +
+        (g.uY * ((1 - v.scales.y) / 2)) + p.coordinates.y + o_.y - (o_.x * g.tiltNorm) -
+        h - gs.uY*(1 - v.scales.x);
       const omvsy = (1 - v.scales.y);
       const xo = gs.uX * omvsy;
       const yo = - gs.uY * (1 - v.scales.y);
-      const columns = (look.columns == null) ? 1 : look.columns;
+      const columns =
+        (look.pattern == null || look.pattern.columns == null) ?
+        1 :
+        look.pattern.columns;
       const sx = s.x * (1 + ((columns - 1) * (1 - v.scales.y)));
 
       const shape = {
@@ -1100,12 +1108,41 @@
       var lookComponents = v.lookComponents(true);
       for (var side = 0; side < sides.length; side++) {
         var look = lookComponents[side];
-        this[sides[side]](
-          look, g, v, p,
-          {"x": 1, "y": 1},
-          {"x": 0, "y": 0},
-          look.paint(v.feed, [v.coordinates.x, v.coordinates.y])
-        );
+        if (look.pattern == null) {
+          this[sides[side]](
+            look, g, v, p,
+            {"x": 1, "y": 1},
+            {"x": 0, "y": 0},
+            look.emitFaceColor(v.feed, [v.coordinates.x, v.coordinates.y])
+          );
+        } else {
+          const rows = (look.pattern.rows == null) ? 1 : look.pattern.rows;
+          const cols = (look.pattern.columns == null) ? 1 : look.pattern.columns;
+          for (var r = 0; r < cols; r++) {
+            const hs_side = (hs[side] < 1) ? 1 : hs[side];
+            for (var c_ = 0; c_ < rows * hs_side; c_++) {
+              const hsSideRatio = (hs_side / Math.ceil(hs_side));
+              const c = c_ * hsSideRatio;
+              var uY = (sides[side] == "prismTop") ? ((g.uX) * Math.SQRT2) : g.uZ;
+              var sX = (sides[side] == "prismLeft") ?
+                v.scales.x :
+                ((sides[side] == "prismRight") ? (v.scales.y / v.scales.x) : 1);
+              var nY = (sides[side] == "prismRight") ? (1 / v.scales.y) : 1;
+              this[sides[side]](
+                look, g, v, p,
+                {"x": 1 / cols, "y": hsSideRatio / (rows * hs_side)},
+                {
+                  "x": ((r * (sX * g.uX * Math.SQRT2)) / cols),
+                  "y": ((nY * c * uY) / rows)
+                },
+                look.emitFacePatternColor(
+                  r, c,
+                  v.feed, [v.coordinates.x, v.coordinates.y]
+                )
+              );
+            }
+          }
+        }
       }
       return p;
     }
@@ -1114,7 +1151,7 @@
       const x_ = coordinates.x, y_ = coordinates.y;
       const look = v.look;
       const c_ =
-        look.paint(
+        look.emitFaceColor(
           v.feed,
           [i, v.coordinates.x, v.coordinates.y]
         );
