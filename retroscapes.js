@@ -192,6 +192,10 @@
     noneOnAxes(p) {
       return this.countOnAxes(p) == 0;
     }
+
+    noneAround(p) {
+      return this.countAround(p) == 0;
+    }
   }
 
   class Feed {
@@ -457,16 +461,24 @@
       return [this, this, this];
     }
 
-    setEdge(s) {
-      this.edge = s;
+    setFace(f) {
+      this.face = f;
     }
 
     setFaceColor(c) {
       this.face.color = c;
     }
 
+    setEdge(s) {
+      this.edge = s;
+    }
+
     setEdgeColor(c) {
       this.edge.color = c;
+    }
+
+    setPattern(p) {
+      this.pattern = p;
     }
 
     _within(color, within, fx, args) {
@@ -508,16 +520,64 @@
       return [this.mesial, this.lateral, this.top];
     }
 
+    _defaultComponents() {
+      if (this.mesial == null) {
+        this.mesial = {};
+      }
+      if (this.lateral == null) {
+        this.lateral = {};
+      }
+      if (this.top == null) {
+        this.top = {};
+      }
+    }
+
+    _defaultComponentsAttribute(attribute, o) {
+      this._defaultComponents();
+      if (this.mesial[attribute] == null) {
+        this.mesial[attribute] = JSON.parse(JSON.stringify(o));
+      }
+      if (this.lateral[attribute] == null) {
+        this.lateral[attribute] = JSON.parse(JSON.stringify(o));
+      }
+      if (this.top[attribute] == null) {
+        this.top[attribute] = JSON.parse(JSON.stringify(o));
+      }
+    }
+
+    setFace(f) {
+      this._defaultComponents();
+      this.mesial.face = JSON.parse(JSON.stringify(f));
+      this.lateral.face = JSON.parse(JSON.stringify(f));
+      this.top.face = JSON.parse(JSON.stringify(f));
+    }
+
     setFaceColor(c) {
-      this.mesial.face.color = c;
-      this.lateral.face.color = c;
-      this.top.face.color = c;
+      this._defaultComponentsAttribute("face", {});
+      this.mesial.face.color = new Color(c);
+      this.lateral.face.color = new Color(c);
+      this.top.face.color = new Color(c);
+    }
+
+    setEdge(e) {
+      this._defaultComponents();
+      this.mesial.edge = JSON.parse(JSON.stringify(e));
+      this.lateral.edge = JSON.parse(JSON.stringify(e));
+      this.top.edge = JSON.parse(JSON.stringify(e));
     }
 
     setEdgeColor(c) {
-      this.mesial.edge.color = s;
-      this.lateral.edge,color = s;
-      this.top.edge.color = s;
+      this._defaultComponentsAttribute("edge", {"lineWidth": 1, "lineDash": []});
+      this.mesial.edge.color = new Color(c);
+      this.lateral.edge.color = new Color(c);
+      this.top.edge.color = new Color(c);
+    }
+
+    setPattern(p) {
+      this._defaultComponents();
+      this.mesial.pattern = JSON.parse(JSON.stringify(p));
+      this.lateral.pattern = JSON.parse(JSON.stringify(p));
+      this.top.pattern = JSON.parse(JSON.stringify(p));
     }
   }
 
@@ -565,6 +625,20 @@
       return this.$.type != 'atom';
     }
 
+    setFace(f) {
+      if (this.isCompound()) {
+        for (var a in this) {
+          if (this[a].setFace != null) {
+            this[a].setFace(f);
+          }
+        }
+      } else {
+        if (this.$.look != null) {
+          this.$.look.setFace(f);
+        }
+      }
+    }
+
     setFaceColor(c) {
       if (this.isCompound()) {
         for (var a in this) {
@@ -579,16 +653,44 @@
       }
     }
 
-    setStroke(s) {
+    setEdge(s) {
       if (this.isCompound()) {
         for (var a in this) {
-          if (this[a].setStroke != null) {
-            this[a].setStroke(s);
+          if (this[a].setEdge != null) {
+            this[a].setEdge(s);
           }
         }
       } else {
         if (this.$.look != null) {
-          this.$.look.setStroke(s);
+          this.$.look.setEdge(s);
+        }
+      }
+    }
+
+    setEdgeColor(c) {
+      if (this.isCompound()) {
+        for (var a in this) {
+          if (this[a].setEdgeColor != null) {
+            this[a].setEdgeColor(c);
+          }
+        }
+      } else {
+        if (this.$.look != null) {
+          this.$.look.setEdgeColor(c);
+        }
+      }
+    }
+
+    setPattern(p) {
+      if (this.isCompound()) {
+        for (var a in this) {
+          if (this[a].setPattern != null) {
+            this[a].setPattern(p);
+          }
+        }
+      } else {
+        if (this.$.look != null) {
+          this.$.look.setPattern(p);
         }
       }
     }

@@ -317,7 +317,10 @@
         }
 
         function build() {
-          const ecru = new Color([155, 165, 120]), black = new Color([0, 0, 0]);
+          const ecru = new Color([155, 165, 120]);
+          const sage = new Color("#8ABD91");
+          const gray = new Color([155, 145, 155]);
+          const coal = new Color([0, 0, 0]);
 
           const block = new Concept({
             "type": "atom",
@@ -346,7 +349,7 @@
               "form": {"shape": "prism"},
               "look": {
                 "face": {},
-                "edge": {"color": black, "lineWidth": 0.5, "lineDash": []},
+                "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []},
               },
               "coordinates": {"z": 1, "o": 1}
             }),
@@ -356,7 +359,7 @@
               "form": {"shape": "prism"},
               "look": {
                 "face": {},
-                "edge": {"color": black, "lineWidth": 0.5, "lineDash": []}
+                "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []}
               },
               "coordinates": {"z": 0, "o": 2}
             })
@@ -371,8 +374,7 @@
               "lateral": {"face": {"color": ecru}},
               "top": {
                 "face": {"color": ecru.lighter(50), "within": "15%"},
-                "edge": {"color": ecru.lighter(30), "lineWidth": 1.05, "lineDash": []},
-                "pattern": {"rows": 2, "columns": 2}
+                "edge": {"color": ecru.lighter(30), "lineWidth": 1.05, "lineDash": []}
               }
             },
             "coordinates": {"z": 1, "o": 0}
@@ -457,7 +459,7 @@
               });
               building_.base.$.offsets.update(offsetsBase);
               building_.base.$.look.face.color =
-                new Color([155, 165, 175]).nearby(10, fr.left().randReals(3));
+                new Color(gray).nearby(5, fr.left().randReals(3));
 
               const scaleBound = 0.7 * fc.randReal([cs.x]);
               building_.tower.$.coordinates.z = 1 + baseHeight;
@@ -473,7 +475,7 @@
               });
               building_.tower.$.look.face.color =
                 new Color(building_.base.$.look.face.color).nearby(
-                  10, fr.right().randReals(3)
+                  8, fr.right().randReals(3)
                 );
 
               return [block_, ground_, building_];
@@ -484,7 +486,7 @@
               block_.$.coordinates.update(cs);
               block_.$.feed = fr.center();
               block_.setFaceColor(
-                new Color([155, 165, 120]).lighter(50).nearby(
+                new Color(ecru).lighter(50).nearby(
                   16, fr.center().randReals(3)
                 ).darker(20)
               );
@@ -492,6 +494,12 @@
               var shore_ = shore.instance();
               shore_.$.coordinates.update(cs);
               shore_.$.feed = fr.center();
+              if (fr.countAround(this.isCity) <= 1 && fr.randReal([cs.y, cs.x]) > 0.1) {
+                shore_.setFaceColor(sage);
+                shore_.setEdgeColor(new Color(sage).darker(5));
+              } else {
+                shore_.$.look.top.setPattern({"rows": 2, "columns": 2});
+              }
 
               return [block_, shore_];
             }
