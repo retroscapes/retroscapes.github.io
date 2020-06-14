@@ -457,7 +457,7 @@
       }
     }
 
-    components(order) {
+    looks(order) {
       return [this, this, this];
     }
 
@@ -466,7 +466,11 @@
     }
 
     setFaceColor(c) {
-      this.face.color = c;
+      if (this.face == null) {
+        this.face = {"color": c};
+      } else {
+        this.face.color = c;
+      }
     }
 
     setEdge(s) {
@@ -474,7 +478,11 @@
     }
 
     setEdgeColor(c) {
-      this.edge.color = c;
+      if (this.face == null) {
+        this.edge = {"color": c};
+      } else {
+        this.edge.color = c;
+      }
     }
 
     setPattern(p) {
@@ -509,14 +517,14 @@
     }
   }
 
-  class LookComponents {
+  class Looks {
     constructor(components) {
       for (var a in components) {
         this[a] = new Look(components[a]);
       }
     }
 
-    components(order) {
+    looks(order) {
       return [this.mesial, this.lateral, this.top];
     }
 
@@ -583,8 +591,9 @@
 
   class Concept {
     constructor(o) {
-      if (o.type === 'atom') {
+      if (o != null) {
         this.$ = o;
+        this.$.type = "atom";
         this.$.coordinates = new Vector((o.coordinates == null) ? {"x": 0, "y":0, "z": 0} : o.coordinates);
         this.$.scales = new Vector((o.scales == null) ? {"x": 1, "y":1, "z": 1} : o.scales);
         this.$.offsets = new Vector((o.offsets == null) ? {"x": 0, "y":0, "z": 0} : o.offsets);
@@ -596,101 +605,117 @@
               this.$.look.top == null
             ) ?
             new Look(this.$.look) :
-            new LookComponents(this.$.look);
+            new Looks(this.$.look);
         }
-      } else {
-        for (var a in o) {
-          this[a] = o[a];
-        }
-        this.$ = {};
       }
     }
 
     instance() {
-      var es = {}, count = 0;
-      for (var a in this) {
-        if (a != '$') {
-          es[a] = this[a].instance();
-          count += 1;
-        }
-      }
-      return new Concept(
-        (count == 0) ?
-        JSON.parse(JSON.stringify(this)).$ :
-        es
-      );
+      return new Concept(JSON.parse(JSON.stringify(this)).$);
+    }
+
+    isAtom() {
+      return true;
     }
 
     isCompound() {
-      return this.$.type != 'atom';
+      return false;
     }
 
     setFace(f) {
-      if (this.isCompound()) {
-        for (var a in this) {
-          if (this[a].setFace != null) {
-            this[a].setFace(f);
-          }
+      if (this.$.look != null) {
+        this.$.look.setFace(f);
+      }
+    }
+
+    setFaceColor(c) {
+      if (this.$.look != null) {
+        this.$.look.setFaceColor(c);
+      }
+    }
+
+    setEdge(s) {
+      if (this.$.look != null) {
+        this.$.look.setEdge(s);
+      }
+    }
+
+    setEdgeColor(c) {
+      if (this.$.look != null) {
+        this.$.look.setEdgeColor(c);
+      }
+    }
+
+    setPattern(p) {
+      if (this.$.look != null) {
+        this.$.look.setPattern(p);
+      }
+    }
+  }
+
+  class Concepts extends Concept {
+    constructor(o) {
+      super();
+      for (var a in o) {
+        this[a] = o[a];
+      }
+      this.$ = {"type": "compound"};
+    }
+
+    isAtom() {
+      return false;
+    }
+
+    isCompound() {
+      return true;
+    }
+
+    instance() {
+      var es = {};
+      for (var a in this) {
+        if (a != '$') {
+          es[a] = this[a].instance();
         }
-      } else {
-        if (this.$.look != null) {
-          this.$.look.setFace(f);
+      }
+      return new Concepts(es);
+    }
+
+    setFace(f) {
+      for (var a in this) {
+        if (this[a].setFace != null) {
+          this[a].setFace(f);
         }
       }
     }
 
     setFaceColor(c) {
-      if (this.isCompound()) {
-        for (var a in this) {
-          if (this[a].setFaceColor != null) {
-            this[a].setFaceColor(c);
-          }
-        }
-      } else {
-        if (this.$.look != null) {
-          this.$.look.setFaceColor(c);
+      for (var a in this) {
+        if (this[a].setFaceColor != null) {
+          this[a].setFaceColor(c);
         }
       }
     }
 
     setEdge(s) {
-      if (this.isCompound()) {
-        for (var a in this) {
-          if (this[a].setEdge != null) {
-            this[a].setEdge(s);
-          }
-        }
-      } else {
-        if (this.$.look != null) {
-          this.$.look.setEdge(s);
+      for (var a in this) {
+        if (this[a].setEdge != null) {
+          this[a].setEdge(s);
         }
       }
     }
 
     setEdgeColor(c) {
-      if (this.isCompound()) {
-        for (var a in this) {
-          if (this[a].setEdgeColor != null) {
-            this[a].setEdgeColor(c);
-          }
-        }
-      } else {
-        if (this.$.look != null) {
-          this.$.look.setEdgeColor(c);
+      for (var a in this) {
+        if (this[a].setEdgeColor != null) {
+          this[a].setEdgeColor(c);
         }
       }
     }
 
     setPattern(p) {
-      if (this.isCompound()) {
-        for (var a in this) {
-          if (this[a].setPattern != null) {
-            this[a].setPattern(p);
-          }
-        }
-      } else {
-        if (this.$.look != null) {
-          this.$.look.setPattern(p);
+      for (var a in this) {
+        if (this[a].setPattern != null) {
+          this[a].setPattern(p);
         }
       }
     }
@@ -704,14 +729,14 @@
           v =
             (v.mesial == null && v.lateral == null && v.top == null) ?
             new Look(v) :
-            new LookComponents(v);
+            new Looks(v);
         }
         this[a] = v;
       }
     }
 
-    lookComponents(order) {
-      return this.look.components(order);
+    looks(order) {
+      return this.look.looks(order);
     }
   }
 
@@ -1207,9 +1232,9 @@
       const p = this.project(v);
       var hs = [v.dimensions.height, v.dimensions.height, 1];
       var sides = ["prismLeft", "prismRight", "prismTop"];
-      var lookComponents = v.lookComponents(true);
+      var looks = v.looks(true);
       for (var side = 0; side < sides.length; side++) {
-        var look = lookComponents[side];
+        var look = looks[side];
         if (look.pattern == null) {
           this[sides[side]](
             look, g, v, p,
@@ -1537,8 +1562,9 @@
     "Vector": Vector,
     "Color": Color,
     "Look": Look,
-    "LookComponents": LookComponents,
+    "Looks": Looks,
     "Concept": Concept,
+    "Concepts": Concepts,
     "Instance": Instance,
     "Scape": Scape,
     "Geometry": Geometry,

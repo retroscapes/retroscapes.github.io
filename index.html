@@ -80,6 +80,7 @@
         const Feed = retroscapes.Feed;
         const Color = retroscapes.Color;
         const Concept = retroscapes.Concept;
+        const Concepts = retroscapes.Concepts; 
         const Scape = retroscapes.Scape;
         const Geometry = retroscapes.Geometry;
         const Effect = retroscapes.Effect;
@@ -323,7 +324,6 @@
           const coal = new Color([0, 0, 0]);
 
           const block = new Concept({
-            "type": "atom",
             "dimensions": {"height": 1},
             "form": {"shape": "prism"},
             "look": {
@@ -333,7 +333,6 @@
           });
 
           const ground = new Concept({
-            "type": "atom",
             "dimensions": {"height": 0},
             "form": {"shape": "prism"},
             "look": {
@@ -342,9 +341,8 @@
             "coordinates": {"z": 1, "o": 0}
           });
 
-          const building = new Concept({
+          const building = new Concepts({
             "base": new Concept({
-              "type": "atom",
               "dimensions": {},
               "form": {"shape": "prism"},
               "look": {
@@ -354,7 +352,6 @@
               "coordinates": {"z": 1, "o": 1}
             }),
             "tower": new Concept({
-              "type": "atom",
               "dimensions": {},
               "form": {"shape": "prism"},
               "look": {
@@ -366,7 +363,6 @@
           });
 
           const shore = new Concept({
-            "type": "atom",
             "dimensions": {"height": 0.2},
             "form": {"shape": "prism"},
             "look": {
@@ -381,7 +377,6 @@
           });
 
           const ocean = new Concept({
-            "type": "atom",
             "dimensions": {"height": 1},
             "form": {"shape": "prism"},
             "look": {
@@ -392,7 +387,6 @@
           });
 
           const foam = new Concept({
-            "type": "atom",
             "dimensions": {
               "height": 0, "quantity": 2, "radius": 0.5, "spread": 0.6,
               "positional": true
