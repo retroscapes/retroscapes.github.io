@@ -473,6 +473,10 @@
       }
     }
 
+    setFaceColor_(c) {
+      this.face.color = c;
+    }
+
     setEdge(s) {
       this.edge = s;
     }
@@ -483,6 +487,10 @@
       } else {
         this.edge.color = c;
       }
+    }
+
+    setEdgeColor_(c) {
+      this.edge.color = c;
     }
 
     setPattern(p) {
@@ -560,9 +568,21 @@
       this.top.face = JSON.parse(JSON.stringify(f));
     }
 
+    setFace_(f) {
+      this.mesial.face = f;
+      this.lateral.face = JSON.parse(JSON.stringify(f));
+      this.top.face = JSON.parse(JSON.stringify(f));
+    }
+
     setFaceColor(c) {
       this._defaultComponentsAttribute("face", {});
       this.mesial.face.color = new Color(c);
+      this.lateral.face.color = new Color(c);
+      this.top.face.color = new Color(c);
+    }
+
+    setFaceColor_(c) {
+      this.mesial.face.color = c;
       this.lateral.face.color = new Color(c);
       this.top.face.color = new Color(c);
     }
@@ -574,6 +594,12 @@
       this.top.edge = JSON.parse(JSON.stringify(e));
     }
 
+    setEdge_(e) {
+      this.mesial.edge = e;
+      this.lateral.edge = JSON.parse(JSON.stringify(e));
+      this.top.edge = JSON.parse(JSON.stringify(e));
+    }
+
     setEdgeColor(c) {
       this._defaultComponentsAttribute("edge", {"lineWidth": 1, "lineDash": []});
       this.mesial.edge.color = new Color(c);
@@ -581,9 +607,21 @@
       this.top.edge.color = new Color(c);
     }
 
+    setEdgeColor_(c) {
+      this.mesial.edge.color = c;
+      this.lateral.edge.color = new Color(c);
+      this.top.edge.color = new Color(c);
+    }
+
     setPattern(p) {
       this._defaultComponents();
       this.mesial.pattern = JSON.parse(JSON.stringify(p));
+      this.lateral.pattern = JSON.parse(JSON.stringify(p));
+      this.top.pattern = JSON.parse(JSON.stringify(p));
+    }
+
+    setPattern_(p) {
+      this.mesial.pattern = p;
       this.lateral.pattern = JSON.parse(JSON.stringify(p));
       this.top.pattern = JSON.parse(JSON.stringify(p));
     }
@@ -628,10 +666,18 @@
       }
     }
 
+    setFace_(f) {
+      this.$.look.setFace_(f);
+    }
+
     setFaceColor(c) {
       if (this.$.look != null) {
         this.$.look.setFaceColor(c);
       }
+    }
+
+    setFaceColor_(c) {
+      this.$.look.setFaceColor(c);
     }
 
     setEdge(s) {
@@ -640,16 +686,28 @@
       }
     }
 
+    setEdge_(s) {
+      this.$.look.setEdge(s);
+    }
+
     setEdgeColor(c) {
       if (this.$.look != null) {
         this.$.look.setEdgeColor(c);
       }
     }
 
+    setEdgeColor_(c) {
+      this.$.look.setEdgeColor_(c);
+    }
+
     setPattern(p) {
       if (this.$.look != null) {
         this.$.look.setPattern(p);
       }
+    }
+
+    setPattern_(p) {
+      this.$.look.setPattern_(p);
     }
   }
 
@@ -688,11 +746,23 @@
       }
     }
 
+    setFace_(f) {
+      for (var a in this) {
+        this[a].setFace_(f);
+      }
+    }
+
     setFaceColor(c) {
       for (var a in this) {
         if (this[a].setFaceColor != null) {
           this[a].setFaceColor(c);
         }
+      }
+    }
+
+    setFaceColor_(c) {
+      for (var a in this) {
+        this[a].setFaceColor_(c);
       }
     }
 
@@ -704,6 +774,12 @@
       }
     }
 
+    setEdge_(s) {
+      for (var a in this) {
+        this[a].setEdge_(s);
+      }
+    }
+
     setEdgeColor(c) {
       for (var a in this) {
         if (this[a].setEdgeColor != null) {
@@ -712,11 +788,23 @@
       }
     }
 
+    setEdgeColor_(c) {
+      for (var a in this) {
+        this[a].setEdgeColor_(c);
+      }
+    }
+
     setPattern(p) {
       for (var a in this) {
         if (this[a].setPattern != null) {
           this[a].setPattern(p);
         }
+      }
+    }
+
+    setPattern_(p) {
+      for (var a in this) {
+        this[a].setPattern_(p);
       }
     }
   }

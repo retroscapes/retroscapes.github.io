@@ -80,7 +80,7 @@
         const Feed = retroscapes.Feed;
         const Color = retroscapes.Color;
         const Concept = retroscapes.Concept;
-        const Concepts = retroscapes.Concepts; 
+        const Concepts = retroscapes.Concepts;
         const Scape = retroscapes.Scape;
         const Geometry = retroscapes.Geometry;
         const Effect = retroscapes.Effect;
@@ -424,7 +424,7 @@
               var block_ = block.instance();
               block_.$.coordinates.update(cs);
               block_.$.feed = fc;
-              block_.setFaceColor(
+              block_.setFaceColor_(
                 new Color(block_.$.look.face.color).nearby(16, fc.randReals(3)).darker(20)
               );
 
@@ -452,8 +452,9 @@
                 "y": 1 - (0.4 * fc.randReal([cs.y]))
               });
               building_.base.$.offsets.update(offsetsBase);
-              building_.base.$.look.face.color =
-                new Color(gray).nearby(5, fr.left().randReals(3));
+              building_.base.setFaceColor_(
+                new Color(gray).nearby(5, fr.left().randReals(3))
+              );
 
               const scaleBound = 0.7 * fc.randReal([cs.x]);
               building_.tower.$.coordinates.z = 1 + baseHeight;
@@ -467,10 +468,11 @@
                 "x": 0.7 * offsetsBase.x,
                 "y": 0.7 * offsetsBase.y
               });
-              building_.tower.$.look.face.color =
+              building_.tower.setFaceColor_(
                 new Color(building_.base.$.look.face.color).nearby(
                   8, fr.right().randReals(3)
-                );
+                )
+              );
 
               return [block_, ground_, building_];
             }
@@ -479,7 +481,7 @@
               var block_ = block.instance();
               block_.$.coordinates.update(cs);
               block_.$.feed = fr.center();
-              block_.setFaceColor(
+              block_.setFaceColor_(
                 new Color(ecru).lighter(50).nearby(
                   16, fr.center().randReals(3)
                 ).darker(20)
@@ -489,8 +491,8 @@
               shore_.$.coordinates.update(cs);
               shore_.$.feed = fr.center();
               if (fr.countAround(this.isCity) <= 1 && fr.randReal([cs.y, cs.x]) > 0.1) {
-                shore_.setFaceColor(sage);
-                shore_.setEdgeColor(new Color(sage).darker(5));
+                shore_.setFaceColor_(new Color(sage));
+                shore_.$.look.top.setEdgeColor(new Color(sage).darker(5));
               } else {
                 shore_.$.look.top.setPattern({"rows": 2, "columns": 2});
               }
@@ -502,7 +504,7 @@
               var ocean_ = ocean.instance();
               ocean_.$.coordinates.update(cs);
               ocean_.$.feed = fr.center();
-              ocean_.setFaceColor(
+              ocean_.setFaceColor_(
                 new Color(ocean_.$.look.face.color).nearby(12, fr.center().randReals(3))
               );
 
