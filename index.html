@@ -78,6 +78,7 @@
 
         // Import utilized classes from the retroscapes library.
         const Feed = retroscapes.Feed;
+        const Anchors = retroscapes.Anchors;
         const Color = retroscapes.Color;
         const Concept = retroscapes.Concept;
         const Concepts = retroscapes.Concepts;
@@ -320,6 +321,7 @@
         function build() {
           const ecru = new Color([155, 165, 120]);
           const sage = new Color("#8ABD91");
+          const clay = new Color([115, 90, 93]);
           const gray = new Color([155, 145, 155]);
           const coal = new Color([0, 0, 0]);
 
@@ -404,6 +406,8 @@
             "coordinates": {"z": 1, "o": 1}
           });
 
+          const denselyPopulated = new Anchors(8, 0.02, [2, 2]);
+
           class Example extends Scape {
             render() {
               return ["world"];
@@ -434,45 +438,63 @@
 
               var building_ = building.instance();
               building_.$.coordinates = cs;
+
               building_.base.$.feed = fr.up();
-              building_.tower.$.feed = fr.down();
-              const hMax = !this.isCityIsolated(fr) ? (this.isCitySurrounded(fr) ? 3 : 1) : 1;
-              building_.tower.$.dimensions.height =
-                1 + (hMax * (fc.randReal([cs.x, 2 * cs.y])));
-              const baseHeight =
-                0.2 + 0.3 * (fc.randReal([cs.x + 3 * cs.y, 7 * cs.y]));
+              const baseHeight = 0.2 + 0.3 * (fc.randReal([cs.x + 3 * cs.y, 7 * cs.y]));
               const offsetsBase = {
                 "x": -1 + (2 * fc.randReal([cs.x])),
                 "y": -1 + (2 * fc.randReal([cs.y]))
               };
               building_.base.$.coordinates.z = 1;
-              building_.base.$.dimensions.height = baseHeight;
               building_.base.$.scales.update({
                 "x": 1 - (0.4 * fc.randReal([cs.x])),
                 "y": 1 - (0.4 * fc.randReal([cs.y]))
               });
               building_.base.$.offsets.update(offsetsBase);
-              building_.base.setFaceColor_(
-                new Color(gray).nearby(5, fr.left().randReals(3))
-              );
 
-              const scaleBound = 0.7 * fc.randReal([cs.x]);
-              building_.tower.$.coordinates.z = 1 + baseHeight;
-              building_.tower.$.scales.update({
-                "x": 1 - 0.1 - (scaleBound),
-                "y": 1 - 0.1 - (
-                  ((1 - (scaleBound / 0.7)) * 0.5) + (0.2 * fc.randReal([cs.y]))
-                )
-              });
-              building_.tower.$.offsets.update({
-                "x": 0.7 * offsetsBase.x,
-                "y": 0.7 * offsetsBase.y
-              });
-              building_.tower.setFaceColor_(
-                new Color(building_.base.$.look.face.color).nearby(
-                  8, fr.right().randReals(3)
-                )
-              );
+              if (denselyPopulated.anchored(cs)) {
+                building_.base.$.dimensions.height = baseHeight;
+                building_.base.setFaceColor_(
+                  new Color(gray).nearby(5, fr.left().randReals(3))
+                );
+
+                building_.tower.$.feed = fr.down();
+                const hMax = !this.isCityIsolated(fr) ? (this.isCitySurrounded(fr) ? 3 : 1) : 1;
+                building_.tower.$.dimensions.height =
+                  1 + (hMax * (fc.randReal([cs.x, 2 * cs.y])));
+
+                const scaleBound = 0.7 * fc.randReal([cs.x]);
+                building_.tower.$.coordinates.z = 1 + baseHeight;
+                building_.tower.$.scales.update({
+                  "x": 1 - 0.1 - (scaleBound),
+                  "y": 1 - 0.1 - (
+                    ((1 - (scaleBound / 0.7)) * 0.5) + (0.2 * fc.randReal([cs.y]))
+                  )
+                });
+                building_.tower.$.offsets.update({
+                  "x": 0.7 * offsetsBase.x,
+                  "y": 0.7 * offsetsBase.y
+                });
+                building_.tower.setFaceColor_(
+                  new Color(building_.base.$.look.face.color).nearby(
+                    8, fr.right().randReals(3)
+                  )
+                );
+              } else {
+                ground_.$.dimensions.height = 0.2;
+
+                building_.base.$.coordinates.z = 1.2;
+                building_.base.$.dimensions.height = baseHeight + 0.25;
+                building_.base.setFaceColor_(
+                  new Color(clay).lighter(35).nearby(15, fr.up().randReals(3))
+                );
+                building_.base.$.scales.update({
+                  "x": 0.9 * building_.base.$.scales.x * building_.tower.$.scales.x,
+                  "y": 0.9 * building_.base.$.scales.y * building_.tower.$.scales.y
+                });
+
+                delete building_.tower;
+              }
 
               return [block_, ground_, building_];
             }

@@ -90,6 +90,31 @@
     return output;
   }
 
+  class FeedSimple {
+    constructor(length) {
+      this.length = length;
+      this.rs = [];
+      var a = sha256('0');
+      var index = 0;
+      for (var i = 0; i < this.length; i++) {
+        this.rs.push(a[index] / 255);
+        if (index == 32) {
+          index = 0;
+          a = sha256(''+i);
+        }
+        index++;
+      }
+
+      this.state = 0;
+    }
+
+    next() {
+      var r = this.rs[this.state];
+      this.state = (this.state == this.rs.length - 1) ? 0 : this.state + 1;
+      return r;
+    }
+  }
+
   class FeedCell extends Uint8Array {
     randReal(vs) {
       var index = vs[0] * 17;
@@ -302,6 +327,64 @@
         this.cacheFeedRegions[cs] = fr;
         return fr;
       }
+    }
+  }
+
+  class Anchors {
+    constructor(period, probability, radius) {
+      this.feed = new FeedSimple(period * period * 20);
+      this.period = period;
+      this.radius =
+        Array.isArray(radius) ?
+        radius :
+        [0, radius];
+
+      const dist = function(x1, y1, x2, y2) {
+        return Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);
+      }
+
+      this.anchors = [];
+      for (var i = 0; i < this.period; i++) {
+        for (var j = 0; j < this.period; j++) {
+          if (this.feed.next() < probability) {
+            this.anchors.push({
+              "x": i, "y": j,
+              "r": this.radius[0] + this.feed.next() * this.radius[1]
+            });
+          }
+        }
+      }
+
+      this.cache = {};
+      for (var i = 0; i < this.period; i++) {
+        for (var j = 0; j < this.period; j++) {
+          var closest = 0;
+          var dist_ = dist(this.anchors[0].x, this.anchors[0].y, i, j);
+          for (var k = 0; k < this.anchors.length; k++) {
+            var dist__ = dist(this.anchors[k].x, this.anchors[k].y, i, j);
+            if (dist__ < dist_) {
+              closest = k;
+              dist_ = dist__;
+            }
+          }
+          this.cache[i + "," + j] = {
+            "distance": Math.sqrt(dist_),
+            "radius": this.anchors[closest].r
+          };
+        }
+      }
+    }
+
+    closest(coordinates) {
+      const mod_ = function (x, n) { return ((x%n)+n)%n; };
+      const x = mod_(coordinates.x, this.period);
+      const y = mod_(coordinates.y, this.period);
+      return this.cache[x + "," + y];
+    }
+
+    anchored(coordinates) {
+      const anchor = this.closest(coordinates);
+      return anchor.distance < anchor.radius;
     }
   }
 
@@ -1647,6 +1730,7 @@
     "FeedCell": FeedCell,
     "FeedRegion": FeedRegion,
     "Feed": Feed,
+    "Anchors": Anchors,
     "Vector": Vector,
     "Color": Color,
     "Look": Look,
