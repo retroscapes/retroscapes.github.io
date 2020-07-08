@@ -90,14 +90,13 @@
     return output;
   }
 
-  class FeedSimple {
+  class FeedSimple extends Uint8Array {
     constructor(length) {
-      this.length = length;
-      this.rs = [];
+      super(length);
       var a = sha256('0');
       var index = 0;
-      for (var i = 0; i < this.length; i++) {
-        this.rs.push(a[index] / 255);
+      for (var i = 0; i < length; i++) {
+        this[i] = a[index];
         if (index == 32) {
           index = 0;
           a = sha256(''+i);
@@ -109,9 +108,9 @@
     }
 
     next() {
-      var r = this.rs[this.state];
-      this.state = (this.state == this.rs.length - 1) ? 0 : this.state + 1;
-      return r;
+      var r = this[this.state];
+      this.state = (this.state == this.length - 1) ? 0 : this.state + 1;
+      return r / 255;
     }
   }
 
@@ -277,7 +276,7 @@
       const pAnchor = this.configuration.pAnchor;
       const pTethered = this.configuration.pTethered;
       var dist = null;
-      var r = this.at({"x": coordinates.x, "y": coordinates.y}, quantity);
+      var r = this.at(coordinates, quantity);
       var r0 = r[0] + (r[0] == 0 ? 1 : 0);
       const tethered = ((r0 * 17) % 256) < (pTethered * 256);
       if (((r0 * 103) % 256) < (pAnchor * 256)) {
@@ -300,31 +299,32 @@
       return r;
     }
 
-    feedCellAt(x, y) {
-      var fc = this.cacheFeedCells[x + "," + y];
+    feedCellAt(coordinates) {
+      const cacheKey = coordinates.toCSV();
+      var fc = this.cacheFeedCells[cacheKey];
       if (fc == null) {
-        fc = this.nearest({"x": x, "y": y});
-        this.cacheFeedCells[x + "," + y] = fc;
+        fc = this.nearest(coordinates);
+        this.cacheFeedCells[cacheKey] = fc;
       }
       return fc;
     }
 
     feedRegionAt(coordinates) {
       const x = coordinates.x, y = coordinates.y;
-      const cs = coordinates.toCSV();
-      if (cs in this.cacheFeedRegions) {
-        return this.cacheFeedRegions[cs];
+      const cacheKey = coordinates.toCSV();
+      if (cacheKey in this.cacheFeedRegions) {
+        return this.cacheFeedRegions[cacheKey];
       } else {
         var fr = new FeedRegion();
 
         for (var dx = -2; dx <= 2; dx++) {
           fr[dx] = {};
           for (var dy = -2; dy <= 2; dy++) {
-            fr[dx][dy] = this.feedCellAt(x + dx, y + dy);
+            fr[dx][dy] = this.feedCellAt(new Vector({"x": x + dx, "y": y + dy}));
           }
         }
 
-        this.cacheFeedRegions[cs] = fr;
+        this.cacheFeedRegions[cacheKey] = fr;
         return fr;
       }
     }
@@ -376,7 +376,7 @@
     }
 
     closest(coordinates) {
-      const mod_ = function (x, n) { return ((x%n)+n)%n; };
+      const mod_ = function (x, n) { return ((x % n) + n) % n; };
       const x = mod_(coordinates.x, this.period);
       const y = mod_(coordinates.y, this.period);
       return this.cache[x + "," + y];
