@@ -1017,16 +1017,15 @@
   }
 
   class InteractionDrag extends Interaction {
-    constructor(canvas) {
+    constructor() {
       super();
-      this.canvas = canvas;
       this.active = false;
       this.start = null;
       this.center = null;
       this.last = {};
     }
 
-    move(e) {
+    mousemove(e) {
       const cursor = this.canvas.getCursorPosition(e);
       if (this.active) {
         const c = this.center.add(cursor.sub(this.start));
@@ -1045,14 +1044,14 @@
       }
     }
 
-    begin(e) {
+    mousedown(e) {
       this.active = true;
       this.start = this.canvas.getCursorPosition(e);
       this.center = this.canvas.projection().getCenter();
       this.canvas.canvas.style.cursor = "grabbing";
     }
 
-    end(e) {
+    mouseup(e) {
       this.active = false;
       this.start = null;
       this.center = null;
@@ -1099,11 +1098,10 @@
 
   // Wrapper class for a canvas element.
   class Canvas {
-    constructor(canvas, projection, update, click) {
+    constructor(canvas, projection, update, interactions) {
       this.projection = projection;
       this.canvas = canvas;
       this.update = update;
-      this.click = click;
 
       const self = this;
       this.canvas.addEventListener('click', function(e) { self.eventOnClick(e); });
@@ -1112,7 +1110,10 @@
       this.canvas.addEventListener('mouseup', function(e) { self.eventOnMouseUp(e); });
 
       // Initialize interactions.
-      this.interactionDrag = new InteractionDrag(self);
+      this.interactions = interactions;
+      for (var i = 0; i < this.interactions.length; i++) {
+          this.interactions[i].canvas = this;
+      }
     }
 
     getCursorPosition(event) {
@@ -1123,21 +1124,35 @@
     }
 
     eventOnClick(e) {
-      if (this.click != null) {
-        this.click();
+      for (var i = 0; i < this.interactions.length; i++) {
+        if (this.interactions[i].click != null) {
+          this.interactions[i].click(e);
+        }
       }
     }
 
     eventOnMouseMove(e) {
-      this.interactionDrag.move(e);
+      for (var i = 0; i < this.interactions.length; i++) {
+        if (this.interactions[i].mousemove != null) {
+          this.interactions[i].mousemove(e);
+        }
+      }
     }
 
     eventOnMouseDown(e) {
-      this.interactionDrag.begin(e);
+      for (var i = 0; i < this.interactions.length; i++) {
+        if (this.interactions[i].mousedown != null) {
+          this.interactions[i].mousedown(e);
+        }
+      }
     }
 
     eventOnMouseUp(e) {
-      this.interactionDrag.end(e);
+      for (var i = 0; i < this.interactions.length; i++) {
+        if (this.interactions[i].mouseup != null) {
+          this.interactions[i].mouseup(e);
+        }
+      }
     }
   }
 
@@ -1741,6 +1756,8 @@
     "Scape": Scape,
     "Geometry": Geometry,
     "Effect": Effect,
+    "Interaction": Interaction,
+    "InteractionDrag": InteractionDrag,
     "Cache": Cache,
     "Canvas": Canvas,
     "Render": Render,

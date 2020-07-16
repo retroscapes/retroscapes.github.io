@@ -83,6 +83,7 @@
         const Concept = retroscapes.Concept;
         const Concepts = retroscapes.Concepts;
         const Scape = retroscapes.Scape;
+        const InteractionDrag = retroscapes.InteractionDrag;
         const Geometry = retroscapes.Geometry;
         const Effect = retroscapes.Effect;
         const Canvas = retroscapes.Canvas;
@@ -165,7 +166,8 @@
           self.canvas = new Canvas(
             document.getElementById('canvas'),
             getProjection,
-            function (center) { redraw(center); }
+            function (center) { redraw(center); },
+            [new InteractionDrag()]
           );
 
           self.render = new Render({
