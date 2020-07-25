@@ -84,6 +84,7 @@
         const Concepts = retroscapes.Concepts;
         const Scape = retroscapes.Scape;
         const InteractionDrag = retroscapes.InteractionDrag;
+        const InteractionNudge = retroscapes.InteractionNudge;   
         const Geometry = retroscapes.Geometry;
         const Effect = retroscapes.Effect;
         const Canvas = retroscapes.Canvas;
@@ -167,7 +168,10 @@
             document.getElementById('canvas'),
             getProjection,
             function (center) { redraw(center); },
-            [new InteractionDrag()]
+            [
+              new InteractionDrag(),
+              new InteractionNudge(getPlateCenter)
+            ]
           );
 
           self.render = new Render({
@@ -184,7 +188,8 @@
           draw();
         }
 
-        function alignment(vps, callback) {
+        function getPlateBounds() {
+          const vps = self.render.rendered;
           var bounds = {"xMin": null, "xMax": null, "yMin": null, "yMax": null};
           for (var i = 0; i < vps.length; i++) {
             if (vps[i].v.coordinates.z == 0) {
@@ -195,6 +200,22 @@
               bounds.yMax = (bounds.yMax == null) ? y : Math.max(y, bounds.yMax);
             }
           }
+          return bounds;
+        }
+
+        function getPlateCenter() {
+          const bounds = getPlateBounds();
+          const proj = getProjection();
+          return {
+            "x": (bounds.xMin + bounds.xMax) / 2,
+            "y": ((bounds.yMin + bounds.yMax) / 2) - (0.75 * (proj.uY + proj.uZ))
+          };
+        }
+
+        function alignment(vps, callback) {
+          // Determine the bounds of the rendered blocks.
+          var bounds = getPlateBounds();
+
           // Determine the dimensinons of the canvas element.
           const canvasElement = document.getElementById("canvas");
           canvasElement.style.marginLeft = '0px';

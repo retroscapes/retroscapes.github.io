@@ -1036,8 +1036,9 @@
         c.x = Math.floor(c.x / (p.uX * 2 * du)) * (p.uX * 2 * du);
         c.y = Math.floor(c.y / (p.uY * 2 * du)) * (p.uY * 2 * du);
 
-        // Only return the new center if an update occurred.
+        // Only change the center if an update occurred.
         if (this.last.x != c.x || this.last.y != c.y) {
+          // Perform update as specified within Canvas object.
           this.canvas.update(c);
         }
         this.last = c;
@@ -1056,6 +1057,31 @@
       this.start = null;
       this.center = null;
       this.canvas.canvas.style.cursor = "grab";
+    }
+  }
+
+  class InteractionNudge extends Interaction {
+    constructor(center) {
+      super();
+      this.center = center;
+    }
+
+    click(e) {
+      // Determine the cursor position relative to the center.
+      const cursor = this.canvas.getCursorPosition(e);
+      const delta = cursor.sub(new Vector(this.center()));
+
+      // Update the center based on the direction in which cursor
+      // deviates from the center (ignoring distance from center).
+      const p = this.canvas.projection();
+      const dx = (delta.x > (p.uX * 2)) ? 1 : ((delta.x < (-p.uX * 2)) ? -1 : 0);
+      const dy = (delta.y > (p.uY * 2)) ? 1 : ((delta.y < (-p.uY * 2)) ? -1 : 0);
+      const c = p.getCenter();
+      c.x = Math.round((c.x + (p.uX * 2 * dx)) / (p.uX * 2)) * (p.uX * 2);
+      c.y = Math.round((c.y + (p.uY * 2 * dy)) / (p.uY * 2)) * (p.uY * 2);
+
+      // Perform update as specified within Canvas object.
+      this.canvas.update(c);
     }
   }
 
@@ -1102,9 +1128,12 @@
       this.projection = projection;
       this.canvas = canvas;
       this.update = update;
+      
+      this._lastMouseDownEvent = null;
 
       const self = this;
-      this.canvas.addEventListener('click', function(e) { self.eventOnClick(e); });
+
+      // Add standard event listeners.
       this.canvas.addEventListener('mousemove', function(e) { self.eventOnMouseMove(e); });
       this.canvas.addEventListener('mousedown', function(e) { self.eventOnMouseDown(e); });
       this.canvas.addEventListener('mouseup', function(e) { self.eventOnMouseUp(e); });
@@ -1123,12 +1152,11 @@
       return new Vector({"x": x, "y": y});
     }
 
-    eventOnClick(e) {
-      for (var i = 0; i < this.interactions.length; i++) {
-        if (this.interactions[i].click != null) {
-          this.interactions[i].click(e);
-        }
-      }
+    getCursorPositionRelativeToCenter(event) {
+      const rect = this.canvas.getBoundingClientRect();
+      const x = event.clientX - (rect.left + (rect.width / 2));
+      const y = event.clientY - (rect.top + (rect.height / 2));
+      return new Vector({"x": x, "y": y});
     }
 
     eventOnMouseMove(e) {
@@ -1140,6 +1168,7 @@
     }
 
     eventOnMouseDown(e) {
+      this._lastMouseDownEvent = e;
       for (var i = 0; i < this.interactions.length; i++) {
         if (this.interactions[i].mousedown != null) {
           this.interactions[i].mousedown(e);
@@ -1151,6 +1180,18 @@
       for (var i = 0; i < this.interactions.length; i++) {
         if (this.interactions[i].mouseup != null) {
           this.interactions[i].mouseup(e);
+        }
+      }
+
+      // Only trigger a click event if the mouse has not moved
+      // since the last `mousedown` event.
+      if ((this._lastMouseDownEvent.clientX == e.clientX) &&
+          (this._lastMouseDownEvent.clientY == e.clientY)
+         ) {
+        for (var i = 0; i < this.interactions.length; i++) {
+          if (this.interactions[i].click != null) {
+            this.interactions[i].click(e);
+          }
         }
       }
     }
@@ -1189,6 +1230,9 @@
 
       // State.
       this.rendering = false;
+
+      // Last collection of rendered instances.
+      this.rendered = null;
     }
 
     initialize(center) {
@@ -1707,6 +1751,8 @@
           precedence_[cs] = true;
         }
       }
+
+      this.rendered = vps; // Retain last rendered collection of instances.
       return vps;
     }
 
@@ -1758,6 +1804,7 @@
     "Effect": Effect,
     "Interaction": Interaction,
     "InteractionDrag": InteractionDrag,
+    "InteractionNudge": InteractionNudge,
     "Cache": Cache,
     "Canvas": Canvas,
     "Render": Render,
