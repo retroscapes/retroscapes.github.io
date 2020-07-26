@@ -1128,7 +1128,7 @@
       this.projection = projection;
       this.canvas = canvas;
       this.update = update;
-      
+
       this._lastMouseDownEvent = null;
 
       const self = this;
@@ -1504,6 +1504,32 @@
       return p;
     }
 
+    segment(coordinates, length, s, i, v, ry) {
+      ry = (ry == null) ? 0 : ry;
+      const g = this.projection;
+      const x_ = coordinates.x, y_ = coordinates.y;
+      const look = v.look;
+      const c_ =
+        look.emitFaceColor(
+          v.feed,
+          [i, v.coordinates.x, v.coordinates.y]
+        );
+      this.context.fillStyle = new Color(c_).rgba();
+      this.context.strokeStyle = "rgba(0,0,0,0)";
+
+      this.context.beginPath();
+      this.context.rect(x_ - (length / 2), y_ - g.uY, length / 2, ry);
+
+      if ("edge" in v.look) {
+        this.edge(v.look, coordinates);
+      }
+    }
+
+    point(coordinates, length, s, i, v) {
+      const g = this.projection;
+      this.segment(coordinates, g.uX / 10, s, i, v, g.uY / 10);
+    }
+
     bubble(coordinates, r, s, i, v) {
       const x_ = coordinates.x, y_ = coordinates.y;
       const look = v.look;
@@ -1529,7 +1555,6 @@
       );
       grd.addColorStop(0, new Color(c0).rgba());
       grd.addColorStop(1, new Color(c1).rgba());
-      const s_ = s * 0.8;
       this.context.fillStyle = grd;
       this.context.strokeStyle = "rgba(0,0,0,0)";
 

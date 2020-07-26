@@ -84,7 +84,7 @@
         const Concepts = retroscapes.Concepts;
         const Scape = retroscapes.Scape;
         const InteractionDrag = retroscapes.InteractionDrag;
-        const InteractionNudge = retroscapes.InteractionNudge;   
+        const InteractionNudge = retroscapes.InteractionNudge;
         const Geometry = retroscapes.Geometry;
         const Effect = retroscapes.Effect;
         const Canvas = retroscapes.Canvas;
@@ -401,6 +401,24 @@
             "coordinates": {"z": 1, "o": 0}
           });
 
+          const greenery = new Concept({
+            "dimensions": {
+              "height": 0, "quantity": 10, "radius": 0.4, "spread": 0.8,
+              "positional": true
+            },
+            "form": {"shape": "cloud", "particle": "point"},
+            "look": {
+              "face": {"color": new Color([0, 0, 0, 0])},
+              "edge": {
+                "color": new Color(sage).darker(6),
+                "lineWidth": 1,
+                "lineDash": []
+              },
+              "angles": [(1.5 * Math.PI) - .7, (1.5 * Math.PI) + .7]
+            },
+            "coordinates": {"z": 1, "o": 1}
+          });
+
           const ocean = new Concept({
             "dimensions": {"height": 1},
             "form": {"shape": "prism"},
@@ -429,7 +447,8 @@
             "coordinates": {"z": 1, "o": 1}
           });
 
-          const denselyPopulated = new Anchors(8, 0.02, [2, 2]);
+          const populated = new Anchors(8, 0.02, [2, 2]);
+          const verdant = new Anchors(8, 0.02, [2, 2]);
 
           class Example extends Scape {
             render() {
@@ -475,10 +494,14 @@
               });
               building_.base.$.offsets.update(offsetsBase);
 
-              if (denselyPopulated.anchored(cs)) {
+              if (populated.anchored(cs)) {
                 building_.base.$.dimensions.height = baseHeight;
                 building_.base.setFaceColor_(
-                  new Color(gray).nearby(5, fr.left().randReals(3))
+                  new Color(
+                    [gray, new Color(gray).lighter(50)][
+                      fc.randReal([cs.y, cs.x]) > 0.3 ? 0 : 1
+                    ]
+                  ).nearby(5, fr.left().randReals(3))
                 );
 
                 building_.tower.$.feed = fr.down();
@@ -535,14 +558,25 @@
               var shore_ = shore.instance();
               shore_.$.coordinates.update(cs);
               shore_.$.feed = fr.center();
+              var instances = [];
               if (fr.countAround(this.isCity) <= 1 && fr.randReal([cs.y, cs.x]) > 0.1) {
                 shore_.setFaceColor_(new Color(sage));
                 shore_.$.look.top.setEdgeColor(new Color(sage).darker(5));
+
+                if (verdant.anchored(cs)) {
+                  var greenery_ = greenery.instance();
+                  greenery_.$.coordinates.update(cs);
+                  greenery_.$.feed = fr.center();
+                  instances = [block_, shore_, greenery_];
+                } else {
+                  instances = [block_, shore_];
+                }
               } else {
                 shore_.$.look.top.setPattern({"rows": 2, "columns": 2});
+                instances = [block_, shore_];
               }
 
-              return [block_, shore_];
+              return instances;
             }
 
             ocean(cs, fr) {
