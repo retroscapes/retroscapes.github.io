@@ -1303,6 +1303,27 @@
       this.context.setLineDash([]);
     }
 
+    spot(light, look, coordinates, v, g, v0, v1, v2) {
+      const c_ = this.effectsOnColor(new Color(look.spot.color), coordinates, true);
+      const c = new Color(c_).lighterOrDarker(light, look.lit);
+      const size = look.spot.size;
+      this.context.fillStyle = new Color(c).rgba();
+      for (var i = 0; i < look.spot.quantity; i++) {
+        this.context.beginPath();
+        const rr =
+          (4 * size) + (1 - (8 * size)) * v.feed.randReal([v.coordinates.x + 2 * i]);
+        const cr =
+          (4 * size) + (1 - (8 * size)) * v.feed.randReal([v.coordinates.y + 3 * i]);
+        this.context.rect(
+          v0.x + ((v1.x - v0.x) * rr) + ((v2.x - v0.x) * cr),
+          v0.y + ((v1.y - v0.y) * rr) + ((v2.y - v0.y) * cr),
+          g.unit * size,
+          g.unit * size
+        );
+        this.context.fill();
+      }
+    }
+
     prismEnd(look, gs, v, p, scale, offset, color, bottom) {
       const g = this.projection;
       var s = (scale == null) ? {"x":1, "y":1} : scale;
@@ -1344,6 +1365,13 @@
 
         if ("edge" in look) {
           this.edge(look, p.coordinates);
+        }
+
+        if ("spot" in look) {
+          this.spot(
+            this.light.top, look, p.coordinates, v, g,
+            shape.top, shape.rgt, shape.lft
+          );
         }
       }
     }
@@ -1394,6 +1422,13 @@
 
         if ("edge" in look) {
           this.edge(look, p.coordinates);
+        }
+
+        if ("spot" in look) {
+          this.spot(
+            this.light.left, look, p.coordinates, v, g,
+            shape.toplft, shape.toprgt, shape.botlft
+          );
         }
       }
     }
@@ -1453,6 +1488,13 @@
 
         if ("edge" in look) {
           this.edge(look, p.coordinates);
+        }
+
+        if ("spot" in look) {
+          this.spot(
+            this.light.right, look, p.coordinates, v, g,
+            shape.toplft, shape.toprgt, shape.botlft
+          );
         }
       }
     }

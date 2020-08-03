@@ -371,8 +371,20 @@
               "dimensions": {},
               "form": {"shape": "prism"},
               "look": {
-                "face": {},
-                "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []},
+                "mesial": {
+                  "face": {},
+                  "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []},
+                  "spot": {"color": gray.lighter(45), "quantity": 30, "size": 0.04}
+                },
+                "lateral": {
+                  "face": {},
+                  "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []},
+                  "spot": {"color": gray.lighter(70), "quantity": 30, "size": 0.04}
+                },
+                "top": {
+                  "face": {},
+                  "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []}
+                }
               },
               "coordinates": {"z": 1, "o": 1}
             }),
@@ -522,18 +534,18 @@
                   "y": 0.7 * offsetsBase.y
                 });
                 building_.tower.setFaceColor_(
-                  new Color(building_.base.$.look.face.color).nearby(
+                  new Color(building_.base.$.look.top.face.color).nearby(
                     8, fr.right().randReals(3)
                   )
                 );
               } else {
                 ground_.$.dimensions.height = 0.2;
 
+                const baseColor =
+                  new Color(clay).lighter(35).nearby(15, fr.up().randReals(3));
                 building_.base.$.coordinates.z = 1.2;
                 building_.base.$.dimensions.height = baseHeight + 0.25;
-                building_.base.setFaceColor_(
-                  new Color(clay).lighter(35).nearby(15, fr.up().randReals(3))
-                );
+                building_.base.setFaceColor_(baseColor);
                 building_.base.$.scales.update({
                   "x": 0.9 * building_.base.$.scales.x * building_.tower.$.scales.x,
                   "y": 0.9 * building_.base.$.scales.y * building_.tower.$.scales.y
