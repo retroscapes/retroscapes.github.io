@@ -373,13 +373,11 @@
               "look": {
                 "mesial": {
                   "face": {},
-                  "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []},
-                  "spot": {"color": gray.lighter(45), "quantity": 30, "size": 0.04}
+                  "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []}
                 },
                 "lateral": {
                   "face": {},
-                  "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []},
-                  "spot": {"color": gray.lighter(70), "quantity": 30, "size": 0.04}
+                  "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []}
                 },
                 "top": {
                   "face": {},
@@ -543,9 +541,18 @@
 
                 const baseColor =
                   new Color(clay).lighter(35).nearby(15, fr.up().randReals(3));
+                const spot = {
+                  "color": new Color(baseColor).lighterOrDarker(
+                    fc.randReal([cs.y, cs.x]) > 0.5 ? 40 : -40
+                  ),
+                  "quantity": 30,
+                  "size": 0.04
+                };
                 building_.base.$.coordinates.z = 1.2;
                 building_.base.$.dimensions.height = baseHeight + 0.25;
                 building_.base.setFaceColor_(baseColor);
+                building_.base.$.look.mesial.setSpot(spot);
+                building_.base.$.look.lateral.setSpot(spot);
                 building_.base.$.scales.update({
                   "x": 0.9 * building_.base.$.scales.x * building_.tower.$.scales.x,
                   "y": 0.9 * building_.base.$.scales.y * building_.tower.$.scales.y

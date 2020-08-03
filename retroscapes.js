@@ -560,13 +560,13 @@
       this.face.color = c;
     }
 
-    setEdge(s) {
-      this.edge = s;
+    setEdge(e) {
+      this.edge = e;
     }
 
     setEdgeColor(c) {
-      if (this.face == null) {
-        this.edge = {"color": c};
+      if (this.edge == null) {
+        this.edge = {"color": c, "lineWidth": 1, "lineDash": []};
       } else {
         this.edge.color = c;
       }
@@ -574,6 +574,22 @@
 
     setEdgeColor_(c) {
       this.edge.color = c;
+    }
+
+    setSpot(s) {
+      this.spot = s;
+    }
+
+    setSpotColor(c) {
+      if (this.spot == null) {
+        this.spot = {"color": c, "quantity": 30, "size": 0.03};
+      } else {
+        this.spot.color = c;
+      }
+    }
+
+    setSpotColor_(c) {
+      this.spot.color = c;
     }
 
     setPattern(p) {
@@ -696,6 +712,32 @@
       this.top.edge.color = new Color(c);
     }
 
+    setSpot(s) {
+      this._defaultComponents();
+      this.mesial.spot = JSON.parse(JSON.stringify(s));
+      this.lateral.spot = JSON.parse(JSON.stringify(s));
+      this.top.spot = JSON.parse(JSON.stringify(s));
+    }
+
+    setSpot_(s) {
+      this.mesial.spot = s;
+      this.lateral.spot = JSON.parse(JSON.stringify(s));
+      this.top.spot = JSON.parse(JSON.stringify(s));
+    }
+
+    setSpotColor(c) {
+      this._defaultComponentsAttribute("spot", {"quantity": 30, "size": 0.03});
+      this.mesial.spot.color = new Color(c);
+      this.lateral.spot.color = new Color(c);
+      this.top.spot.color = new Color(c);
+    }
+
+    setSpotColor_(c) {
+      this.mesial.spot.color = c;
+      this.lateral.spot.color = new Color(c);
+      this.top.spot.color = new Color(c);
+    }
+
     setPattern(p) {
       this._defaultComponents();
       this.mesial.pattern = JSON.parse(JSON.stringify(p));
@@ -763,14 +805,14 @@
       this.$.look.setFaceColor(c);
     }
 
-    setEdge(s) {
+    setEdge(e) {
       if (this.$.look != null) {
-        this.$.look.setEdge(s);
+        this.$.look.setEdge(e);
       }
     }
 
-    setEdge_(s) {
-      this.$.look.setEdge(s);
+    setEdge_(e) {
+      this.$.look.setEdge(e);
     }
 
     setEdgeColor(c) {
@@ -781,6 +823,26 @@
 
     setEdgeColor_(c) {
       this.$.look.setEdgeColor_(c);
+    }
+
+    setSpot(s) {
+      if (this.$.look != null) {
+        this.$.look.setSpot(s);
+      }
+    }
+
+    setSpot_(s) {
+      this.$.look.setSpot(s);
+    }
+
+    setSpotColor(c) {
+      if (this.$.look != null) {
+        this.$.look.setSpotColor(c);
+      }
+    }
+
+    setSpotColor_(c) {
+      this.$.look.setSpotColor_(c);
     }
 
     setPattern(p) {
@@ -849,17 +911,17 @@
       }
     }
 
-    setEdge(s) {
+    setEdge(e) {
       for (var a in this) {
         if (this[a].setEdge != null) {
-          this[a].setEdge(s);
+          this[a].setEdge(e);
         }
       }
     }
 
-    setEdge_(s) {
+    setEdge_(e) {
       for (var a in this) {
-        this[a].setEdge_(s);
+        this[a].setEdge_(e);
       }
     }
 
@@ -874,6 +936,34 @@
     setEdgeColor_(c) {
       for (var a in this) {
         this[a].setEdgeColor_(c);
+      }
+    }
+
+    setSpot(s) {
+      for (var a in this) {
+        if (this[a].setSpot != null) {
+          this[a].setSpot(s);
+        }
+      }
+    }
+
+    setSpot_(s) {
+      for (var a in this) {
+        this[a].setSpot_(s);
+      }
+    }
+
+    setSpotColor(c) {
+      for (var a in this) {
+        if (this[a].setSpotColor != null) {
+          this[a].setSpotColor(c);
+        }
+      }
+    }
+
+    setSpotColor_(c) {
+      for (var a in this) {
+        this[a].setSpotColor_(c);
       }
     }
 
