@@ -1396,21 +1396,49 @@
     spot(light, look, coordinates, v, g, v0, v1, v2) {
       const c_ = this.effectsOnColor(new Color(look.spot.color), coordinates, true);
       const c = new Color(c_).lighterOrDarker(light, look.lit);
-      const size = look.spot.size;
+      const size = (look.spot.size * g.unit) / 750;
+      const ratio = (look.spot.ratio == null) ? 1 : look.spot.ratio;
       this.context.fillStyle = new Color(c).rgba();
-      for (var i = 0; i < look.spot.quantity; i++) {
-        this.context.beginPath();
-        const rr =
-          (4 * size) + (1 - (8 * size)) * v.feed.randReal([v.coordinates.x + 2 * i]);
-        const cr =
-          (4 * size) + (1 - (8 * size)) * v.feed.randReal([v.coordinates.y + 3 * i]);
-        this.context.rect(
-          v0.x + ((v1.x - v0.x) * rr) + ((v2.x - v0.x) * cr),
-          v0.y + ((v1.y - v0.y) * rr) + ((v2.y - v0.y) * cr),
-          g.unit * size,
-          g.unit * size
-        );
-        this.context.fill();
+      if (look.spot.arrangement == 'regular') {
+        const rows = Math.round(Math.sqrt(look.spot.quantity / ratio));
+        const cols = Math.round(ratio * rows);
+        const dr = 1 / rows;
+        const dc = 1 / cols;
+        for (var row = 1; row < rows - 1; row++) {
+          for (var col = 1; col < cols - 1; col++) {
+            if (look.spot.probability == null
+              || v.feed.randReal([col + 3 * row]) < look.spot.probability
+               ) {
+              this.context.beginPath();
+              this.context.rect(
+                v0.x + ((v1.x - v0.x) * (dr * row)) + ((v2.x - v0.x) * (dc * col)),
+                v0.y + ((v1.y - v0.y) * (dr * row)) + ((v2.y - v0.y) * (dc * col)),
+                g.unit * size,
+                g.unit * size
+              );
+              this.context.fill();
+            }
+          }
+        }
+      } else {
+        var quantity_ =
+          (look.spot.probability == null) ?
+          look.spot.quantity :
+          Math.round(look.spot.quantity * look.spot.probability);
+        for (var i = 0; i < quantity_; i++) {
+          const rr =
+            (4 * size) + (1 - (8 * size)) * v.feed.randReal([v.coordinates.x + 2 * i]);
+          const cr =
+            (4 * size) + (1 - (8 * size)) * v.feed.randReal([v.coordinates.y + 3 * i]);
+          this.context.beginPath();
+          this.context.rect(
+            v0.x + ((v1.x - v0.x) * rr) + ((v2.x - v0.x) * cr),
+            v0.y + ((v1.y - v0.y) * rr) + ((v2.y - v0.y) * cr),
+            g.unit * size,
+            g.unit * size
+          );
+          this.context.fill();
+        }
       }
     }
 

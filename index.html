@@ -138,7 +138,7 @@
         function geometry() {
           return new Geometry({
             "orientation": {"tilt": 30},
-            "unit": 30, //12
+            "unit": 30,
           });
         }
 
@@ -543,10 +543,13 @@
                   new Color(clay).lighter(35).nearby(15, fr.up().randReals(3));
                 const spot = {
                   "color": new Color(baseColor).lighterOrDarker(
-                    fc.randReal([cs.y, cs.x]) > 0.5 ? 40 : -40
+                    fc.randReal([cs.y, cs.x]) > 0.5 ? 50 : -50
                   ),
-                  "quantity": 30,
-                  "size": 0.04
+                  "size": 1.2,
+                  "ratio": 0.75,
+                  "quantity": 20 + (20 * fc.randReal([cs.y, cs.x])),
+                  "arrangement": "regular",
+                  "probability": 0.8
                 };
                 building_.base.$.coordinates.z = 1.2;
                 building_.base.$.dimensions.height = baseHeight + 0.25;
