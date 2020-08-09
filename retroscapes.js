@@ -423,6 +423,10 @@
     sub(other) {
       return new Vector({"x": this.x - other.x, "y": this.y - other.y});
     }
+
+    magnitude() {
+      return Math.sqrt((this.x * this.x) + (this.y * this.y));
+    }
   }
 
   class Color extends Array {
@@ -1442,6 +1446,41 @@
       }
     }
 
+    line(light, look, coordinates, v, g, vA, vB, vC) {
+      const c_ = this.effectsOnColor(new Color(look.line.color), coordinates, true);
+      const c = new Color(c_).lighterOrDarker(light, look.lit);
+      this.context.lineWidth = look.line.lineWidth;
+      this.context.strokeStyle = new Color(c).rgba();
+      const horizontal = look.line.orientation == "horizontal";
+      const rows = look.line.quantity;
+      const dr = 1 / (rows + 1);
+      const v0 = new Vector(vA);
+      const v1 = new Vector(horizontal ? vC : vB);
+      const v2 = new Vector(horizontal ? vB : vC);
+      const mag1 = v0.sub(horizontal ? v2 : v1).magnitude();
+      const mag2 = v0.sub(horizontal ? v1 : v2).magnitude();
+      const margin =
+        (look.line.margin == null) ?
+        (1 / rows) * (mag1 / mag2) :
+        look.line.margin;
+      for (var row = 1; row < rows + 1; row++) {
+        if (look.line.probability == null
+          || v.feed.randReal([3 * row]) < look.line.probability
+           ) {
+          this.context.beginPath();
+          this.context.moveTo(
+            v0.x + ((v1.x - v0.x) * (dr * row)) + ((v2.x - v0.x) * margin),
+            v0.y + ((v1.y - v0.y) * (dr * row)) + ((v2.y - v0.y) * margin)
+          );
+          this.context.lineTo(
+            v0.x + ((v1.x - v0.x) * (dr * row)) + ((v2.x - v0.x) * (1 - margin)),
+            v0.y + ((v1.y - v0.y) * (dr * row)) + ((v2.y - v0.y) * (1 - margin))
+          );
+          this.context.stroke();
+        }
+      }
+    }
+
     prismEnd(look, gs, v, p, scale, offset, color, bottom) {
       const g = this.projection;
       var s = (scale == null) ? {"x":1, "y":1} : scale;
@@ -1487,6 +1526,13 @@
 
         if ("spot" in look) {
           this.spot(
+            this.light.top, look, p.coordinates, v, g,
+            shape.top, shape.rgt, shape.lft
+          );
+        }
+
+        if ("line" in look) {
+          this.line(
             this.light.top, look, p.coordinates, v, g,
             shape.top, shape.rgt, shape.lft
           );
@@ -1544,6 +1590,13 @@
 
         if ("spot" in look) {
           this.spot(
+            this.light.left, look, p.coordinates, v, g,
+            shape.toplft, shape.toprgt, shape.botlft
+          );
+        }
+
+        if ("line" in look) {
+          this.line(
             this.light.left, look, p.coordinates, v, g,
             shape.toplft, shape.toprgt, shape.botlft
           );
@@ -1610,6 +1663,13 @@
 
         if ("spot" in look) {
           this.spot(
+            this.light.right, look, p.coordinates, v, g,
+            shape.toplft, shape.toprgt, shape.botlft
+          );
+        }
+
+        if ("line" in look) {
+          this.line(
             this.light.right, look, p.coordinates, v, g,
             shape.toplft, shape.toprgt, shape.botlft
           );

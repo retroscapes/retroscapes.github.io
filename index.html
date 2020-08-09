@@ -390,8 +390,18 @@
               "dimensions": {},
               "form": {"shape": "prism"},
               "look": {
-                "face": {},
-                "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []}
+                "mesial": {
+                  "face": {},
+                  "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []}
+                },
+                "lateral": {
+                  "face": {},
+                  "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []}
+                },
+                "top": {
+                  "face": {},
+                  "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []}
+                }
               },
               "coordinates": {"z": 0, "o": 2}
             })
@@ -536,6 +546,24 @@
                     8, fr.right().randReals(3)
                   )
                 );
+
+                const hasLine = fc.randReal([cs.x, 2 * cs.y]);
+                if (hasLine < 0.5) {
+                  const line = {
+                    "color": new Color(
+                      building_.tower.$.look.top.face.color
+                    ).lighterOrDarker(hasLine < 0.25 ? -30 : -60),
+                    "lineWidth": 1,
+                    "quantity": 2 + (
+                      (hasLine > 0.2) ?
+                      Math.round(3.5 * hasLine) :
+                      building_.tower.$.dimensions.height * 5
+                    ),
+                    "margin": 0.1,
+                    "orientation": ((hasLine > 0.2) ? "vertical" : "horizontal")
+                  };
+                  building_.tower.$.look.mesial.line = line;
+                }
               } else {
                 ground_.$.dimensions.height = 0.2;
 
