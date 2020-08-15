@@ -59,14 +59,20 @@
         font-size:36px;
         pointer-events:auto;
       }
-      .links a { margin:0px 2px 0px 2px; font-weight:bold; color:#F2B849; }
-      .links a:hover { color:#FFFFFF; cursor:pointer; }
+      .links a { margin:0px 2px 0px 2px; font-weight:bold; }
+      .links a:hover { cursor:pointer; }
+      .day-a { color:#F2B849; }
+      .day-a:hover { color:#FFFFFF; }
+      .night-a { color:#DBAF48; }
+      .night-a:hover { color:#FFDF96; }
       .icon {}
       @media all and (max-width:900px) {
         body { margin:0px; padding:0px 50px 0px 50px; }
         .logo { color:#DBA744; }
-        .links a { color:#9D9D9D; }
-        .links a:hover { color:#DBA744; }
+        .day-a { color:#9D9D9D; }
+        .day-a:hover { color:#DBA744; }
+        .night-a { color:#BBBBBB; }
+        .night-a:hover { color:#DBA744; }
       }
     </style>
     <script src="retroscapes.js"></script>
@@ -96,6 +102,7 @@
           "quantity": 32, "d": 8,
           "pAnchor": 0.03, "pTethered": 0.9
         });
+        this.night = false;
 
         // Internal classes and methods.
         const self = this;
@@ -254,15 +261,20 @@
           if (window.innerWidth > 900) {
             const logoTop = (canvasRect.height / 2) + 54;
             const logoLeft = canvasMidX - (xLen / 2) - 28;
-            const linksTop = logoTop - 12;
-            const linksLeft =  canvasRect.right - canvasWidthHalf + (0.985 * yLen) - 75;
+            const linksTop = logoTop;
+            const linksLeft =  canvasRect.right - canvasWidthHalf + (0.985 * yLen) - 125;
 
             logo.style.position = 'absolute';
             logo.style.left = logoLeft + 'px';
             logo.style.top = logoTop + 'px';
             logo.style.fontSize = '80px';
             logo.style.transform = 'rotate(26.5deg) skew(25deg)';
-            logo.style.filter = 'drop-shadow(4px -3px 0px #000000)';
+            logo.style.filter = (
+              self.night ?
+              'drop-shadow(4px -3px 1px #FFFFFF)' :
+              'drop-shadow(4px -3px 0px #000000)'
+            );
+            logo.style.color = self.night ? '#DBAF48' : '#FCCA56';
 
             links.style.position = 'absolute';
             links.style.float = 'right';
@@ -271,12 +283,26 @@
             links.style.fontSize = '42px';
             links.style.fontWeight = 'bold';
             links.style.transform = 'rotate(-28deg) skew(-28deg)';
-            links.style.filter = 'drop-shadow(-4px -3px 0px #000000)';
+            links.style.filter = (
+              self.night ?
+              'drop-shadow(-4px -3px 1px #FFFFFF)' :
+              'drop-shadow(-4px -3px 0px #000000)'
+            );
+            const es = document.getElementsByClassName("button");
+            for (var i = 0; i < es.length; i++) {
+              if (self.night) {
+                es[i].classList.add("night-a");
+                es[i].classList.remove("day-a");
+              } else {
+                es[i].classList.add("day-a");
+                es[i].classList.remove("night-a");
+              }
+            }
           } else {
             const logoTop = canvasRect.height - 285 + 0.5 * yLen;
-            const logoLeft = canvasRect.left + (canvasRect.width / 2) - 110;
+            const logoLeft = canvasRect.left + (canvasRect.width / 2) - 110 - 20;
             const linksTop = logoTop + 65;
-            const linksLeft = canvasRect.left + (canvasRect.width / 2) + 55;
+            const linksLeft = canvasRect.left + (canvasRect.width / 2) + 55 - 20;
 
             logo.style.position = 'absolute';
             logo.style.float = 'none';
@@ -285,7 +311,11 @@
             logo.style.fontSize = '60px';
             logo.style.fontWeight = 'normal';
             logo.style.transform = 'none';
-            logo.style.filter = 'drop-shadow(2px 2px 1px #000000)';
+            logo.style.filter = (
+              self.night ?
+              'drop-shadow(2px 2px 1px #555555)' :
+              'drop-shadow(2px 2px 1px #000000)'
+            );
 
             links.style.position = 'absolute';
             links.style.float = 'none';
@@ -294,7 +324,21 @@
             links.style.fontSize = '26px';
             links.style.fontWeight = 'normal';
             links.style.transform = 'none';
-            links.style.filter = 'drop-shadow(1px 1px 1px #000000)';
+            links.style.filter = (
+              self.night ?
+              'drop-shadow(1px 1px 1px #888888)' :
+              'drop-shadow(1px 2px 1px #000000)'
+            );
+            const es = document.getElementsByClassName("button");
+            for (var i = 0; i < es.length; i++) {
+              if (self.night) {
+                es[i].classList.add("night-a");
+                es[i].classList.remove("day-a");
+              } else {
+                es[i].classList.add("day-a");
+                es[i].classList.remove("night-a");
+              }
+            }
           }
           logo.style.display = 'block';
           links.style.display = 'block';
@@ -341,12 +385,54 @@
           window.location.search = "?x=" + Math.floor(c.x) + "&y=" + Math.floor(c.y);
         }
 
+        function toggleNight() {
+          const switch_ = document.getElementById("switch");
+          self.night = !self.night;
+          if (self.night) {
+            switch_.classList.remove("far");
+            switch_.classList.remove("fa-moon");
+            switch_.classList.add("fas");
+            switch_.classList.add("fa-sun");
+            document.body.style.background = "#000000";
+            document.getElementById("canvas").style.background = "#000000";
+            self.render.background = new Color([0, 0, 0]);
+            self.render.light = {"top":-15, "left":10, "right":0};
+          } else {
+            switch_.classList.remove("fas");
+            switch_.classList.remove("fa-sun");
+            switch_.classList.add("far");
+            switch_.classList.add("fa-moon");
+            document.body.style.background = "#FFFFFF";
+            document.getElementById("canvas").style.background = "#FFFFFF";
+            self.render.background = new Color([255, 255, 255]);
+            self.render.light = {"top":20, "left":-15, "right":-60};
+          }
+          self.render.resetCache();
+          self.scapes = build();
+          redraw(getProjection().getCenter());
+        }
+
         function build() {
-          const ecru = new Color([155, 165, 120]);
-          const sage = new Color("#8ABD91");
-          const clay = new Color([115, 90, 93]);
-          const gray = new Color([155, 145, 155]);
-          const coal = new Color([0, 0, 0]);
+          var blue = new Color([30, 90, 195]);
+          var cyan = new Color([130, 150, 240]);
+          var ecru = new Color([155, 165, 120]);
+          var sage = new Color("#8ABD91");
+          var clay = new Color([115, 90, 93]);
+          var gray = new Color([155, 145, 155]);
+          var salt = new Color(gray).lighter(50);
+          var coal = new Color([0, 0, 0]);
+          var bulb = null;
+
+          if (self.night) {
+            blue = new Color(blue).darker(35);
+            cyan = new Color(cyan).darker(50);
+            ecru = new Color(ecru).darker(100);
+            sage = new Color(sage).darker(40);
+            clay = new Color(clay).darker(60);
+            gray = new Color(gray).darker(60);
+            salt = new Color(salt).darker(50);
+            bulb = new Color([252, 227, 0]);
+          }
 
           const block = new Concept({
             "dimensions": {"height": 1},
@@ -443,7 +529,7 @@
             "dimensions": {"height": 1},
             "form": {"shape": "prism"},
             "look": {
-              "face": {"color": new Color([30, 90, 195]), "within": "10%"}
+              "face": {"color": blue, "within": "10%"}
             },
             "coordinates": {"z": 0, "o": 0},
             "scales": {"x": 1, "y": 1, "z": 1}
@@ -458,7 +544,7 @@
             "look": {
               "face": {"color": new Color([0, 0, 0, 0])},
               "edge": {
-                "color": new Color([130, 150, 240]),
+                "color": new Color(cyan),
                 "lineWidth": 1,
                 "lineDash": []
               },
@@ -518,14 +604,17 @@
                 building_.base.$.dimensions.height = baseHeight;
                 building_.base.setFaceColor_(
                   new Color(
-                    [gray, new Color(gray).lighter(50)][
+                    [gray, salt][
                       fc.randReal([cs.y, cs.x]) > 0.3 ? 0 : 1
                     ]
                   ).nearby(5, fr.left().randReals(3))
                 );
 
                 building_.tower.$.feed = fr.down();
-                const hMax = !this.isCityIsolated(fr) ? (this.isCitySurrounded(fr) ? 3 : 1) : 1;
+                const hMax =
+                  !this.isCityIsolated(fr) ?
+                  (this.isCitySurrounded(fr) ? 3 : 1) :
+                  1;
                 building_.tower.$.dimensions.height =
                   1 + (hMax * (fc.randReal([cs.x, 2 * cs.y])));
 
@@ -550,9 +639,13 @@
                 const hasLine = fc.randReal([cs.x, 2 * cs.y]);
                 if (hasLine < 0.5) {
                   const line = {
-                    "color": new Color(
-                      building_.tower.$.look.top.face.color
-                    ).lighterOrDarker(hasLine < 0.25 ? -30 : -60),
+                    "color": (
+                      bulb == null ?
+                      new Color(
+                        building_.tower.$.look.top.face.color
+                      ).lighterOrDarker(hasLine < 0.25 ? -30 : -60) :
+                      bulb
+                    ),
                     "lineWidth": 1,
                     "quantity": 2 + (
                       (hasLine > 0.2) ?
@@ -570,8 +663,12 @@
                 const baseColor =
                   new Color(clay).lighter(35).nearby(15, fr.up().randReals(3));
                 const spot = {
-                  "color": new Color(baseColor).lighterOrDarker(
-                    fc.randReal([cs.y, cs.x]) > 0.5 ? 50 : -50
+                  "color": (
+                    bulb == null ?
+                    new Color(baseColor).lighterOrDarker(
+                      fc.randReal([cs.y, cs.x]) > 0.5 ? 50 : -50
+                    ) :
+                    bulb
                   ),
                   "size": 1.2,
                   "ratio": 0.75,
@@ -610,7 +707,7 @@
               shore_.$.feed = fr.center();
               var instances = [];
               if (fr.countAround(this.isCity) <= 1 && fr.randReal([cs.y, cs.x]) > 0.1) {
-                shore_.setFaceColor_(new Color(sage));
+                shore_.$.look.top.setFaceColor_(new Color(sage));
                 shore_.$.look.top.setEdgeColor(new Color(sage).darker(5));
 
                 if (verdant.anchored(cs)) {
@@ -678,7 +775,8 @@
         return {
           "initialize": initialize,
           "reinitialize": reinitialize,
-          "setUrl": setUrl
+          "setUrl": setUrl,
+          "toggleNight": toggleNight
         };
       }
 
@@ -696,12 +794,17 @@
     <div class="logo noselect" id="logo">retroscapes</div>
     <div class="links noselect" id="links">
       <span class="icon">
-        <a href="javascript: void(0)" onclick="splash.setUrl();">
+        <a href="javascript: void(0)" onclick="splash.toggleNight();" class="button">
+          <i id="switch" class="far fa-moon"></i>
+        </a>
+      </span>
+      <span class="icon">
+        <a href="javascript: void(0)" onclick="splash.setUrl();" class="button">
           <i class="far fa-compass"></i>
         </a>
       </span>
       <span class="icon">
-        <a href="https://github.com/retroscapes">
+        <a href="https://github.com/retroscapes" class="button">
           <i class="fab fa-github"></i>
         </a>
       </span>

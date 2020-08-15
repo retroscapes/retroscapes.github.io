@@ -1303,7 +1303,7 @@
       this.projection = parameters.projection;
 
       // Visual rendering parameters.
-      this.background = (parameters.background) == null ? "#ffffff" : parameters.background;
+      this.background = (parameters.background) == null ? "#FFFFFF" : parameters.background;
 
       this.light =
         (parameters.light == null) ?
@@ -1349,6 +1349,10 @@
       this.context = this.canvas.getContext('2d');
       this.context.fillStyle = new Color(this.background).rgb();
       this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    resetCache() {
+      this.cache_ = new Cache({"time": 10000});
     }
 
     setProjection(projection) {
