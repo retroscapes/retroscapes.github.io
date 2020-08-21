@@ -1399,6 +1399,17 @@
       this.context.lineWidth = edge.lineWidth;
       this.context.stroke();
       this.context.setLineDash([]);
+
+      // Render luminosity effect if it is specified.
+      if (look.edge.luminosity != null) {
+        const blur = 0.2 * Math.floor(this.projection.unit * look.edge.luminosity);
+        this.context.filter = "blur(" + blur + "px)";
+        this.context.strokeStyle = c.rgb();
+        this.context.setLineDash(edge.lineDash);
+        this.context.lineWidth = 3 * edge.lineWidth;
+        this.context.stroke();
+        this.context.filter = "none";
+      }
     }
 
     spot(light, look, coordinates, v, g, v0, v1, v2) {
@@ -1516,6 +1527,12 @@
         this.context.fillStyle = c_.rgba();
         this.context.strokeStyle = "rgba(0,0,0,0)";
 
+        // Set luminosity if it is specified.
+        if (look.face.luminosity != null) {
+          this.context.shadowColor = c_.rgb();
+          this.context.shadowBlur = look.face.luminosity * this.projection.unit;
+        }
+
         this.context.beginPath();
         this.context.moveTo(shape.lft.x, shape.lft.y);
         this.context.lineTo(shape.top.x, shape.top.y);
@@ -1523,6 +1540,10 @@
         this.context.lineTo(shape.bot.x, shape.bot.y);
         this.context.lineTo(shape.lft.x, shape.lft.y);
         this.context.fill();
+
+        // Reset luminosity effects.
+        this.context.shadowColor = null;
+        this.context.shadowBlur = 0;
 
         if ("edge" in look) {
           this.edge(look, p.coordinates);
@@ -1580,6 +1601,12 @@
         this.context.fillStyle = c_.rgb();
         this.context.strokeStyle = "rgba(0,0,0,0)";
 
+        // Set luminosity if it is specified.
+        if (look.face.luminosity != null) {
+          this.context.shadowColor = c_.rgb();
+          this.context.shadowBlur = look.face.luminosity * this.projection.unit;
+        }
+
         this.context.beginPath();
         this.context.moveTo(shape.toplft.x, shape.toplft.y);
         this.context.lineTo(shape.botlft.x, shape.botlft.y);
@@ -1587,6 +1614,10 @@
         this.context.lineTo(shape.toprgt.x, shape.toprgt.y);
         this.context.lineTo(shape.toplft.x, shape.toplft.y);
         this.context.fill();
+
+        // Reset luminosity effects.
+        this.context.shadowColor = null;
+        this.context.shadowBlur = 0;
 
         if ("edge" in look) {
           this.edge(look, p.coordinates);
@@ -1653,6 +1684,12 @@
         this.context.fillStyle = c_.rgb();
         this.context.strokeStyle = "rgba(0,0,0,0)";
 
+        // Set luminosity if it is specified.
+        if (look.face.luminosity != null) {
+          this.context.shadowColor = c_.rgb();
+          this.context.shadowBlur = look.face.luminosity * this.projection.unit;
+        }
+
         this.context.beginPath();
         this.context.moveTo(shape.toplft.x, shape.toplft.y);
         this.context.lineTo(shape.toprgt.x, shape.toprgt.y);
@@ -1660,6 +1697,10 @@
         this.context.lineTo(shape.botlft.x, shape.botlft.y);
         this.context.lineTo(shape.toplft.x, shape.toplft.y);
         this.context.fill();
+
+        // Reset luminosity effects.
+        this.context.shadowColor = null;
+        this.context.shadowBlur = 0;
 
         if ("edge" in look) {
           this.edge(look, p.coordinates);
@@ -1741,8 +1782,18 @@
       this.context.fillStyle = new Color(c_).rgba();
       this.context.strokeStyle = "rgba(0,0,0,0)";
 
+      // Set luminosity if it is specified.
+      if (look.face.luminosity != null) {
+        this.context.shadowColor = c_.rgb();
+        this.context.shadowBlur = look.face.luminosity * this.projection.unit;
+      }
+
       this.context.beginPath();
       this.context.rect(x_ - (length / 2), y_ - g.uY, length / 2, ry);
+
+      // Reset luminosity effects.
+      this.context.shadowColor = null;
+      this.context.shadowBlur = 0;
 
       if ("edge" in v.look) {
         this.edge(v.look, coordinates);
@@ -1782,10 +1833,20 @@
       this.context.fillStyle = grd;
       this.context.strokeStyle = "rgba(0,0,0,0)";
 
+      // Set luminosity if it is specified.
+      if (look.face.luminosity != null) {
+        this.context.shadowColor = c0.rgb();
+        this.context.shadowBlur = look.face.luminosity * this.projection.unit;
+      }
+
       const angles = (v.look.angles == null) ? [0, 2 * Math.PI] : v.look.angles;
       this.context.beginPath();
       this.context.arc(x_, y_, 0.7 * r, angles[0], angles[1], false);
       this.context.fill();
+
+      // Reset luminosity effects.
+      this.context.shadowColor = null;
+      this.context.shadowBlur = 0;
 
       if ("edge" in v.look) {
         this.edge(v.look, coordinates);

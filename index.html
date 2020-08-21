@@ -421,6 +421,7 @@
           var gray = new Color([155, 145, 155]);
           var salt = new Color(gray).lighter(50);
           var coal = new Color([0, 0, 0]);
+          var ruby = new Color([255, 0, 0]);
           var bulb = null;
 
           if (self.night) {
@@ -490,6 +491,26 @@
                 }
               },
               "coordinates": {"z": 0, "o": 2}
+            }),
+            "antenna": new Concept({
+              "dimensions": {"height": 0.6},
+              "form": {"shape": "prism"},
+              "look": {
+                "mesial": {
+                  "face": {"color": gray},
+                  "edge": {"color": coal, "lineWidth": 0.2, "lineDash": []}
+                },
+                "lateral": {
+                  "face": {"color": gray},
+                  "edge": {"color": coal, "lineWidth": 0.2, "lineDash": []}
+                },
+                "top": {
+                  "face": {"color": ruby, "luminosity": 1},
+                  "edge": {"color": ruby, "lineWidth": 0.5, "lineDash": [], "luminosity": 1}
+                }
+              },
+              "coordinates": {"z": 0, "o": 3},
+              "scales": {"x": 0.1, "y": 0.1, "z": 1}
             })
           });
 
@@ -615,8 +636,8 @@
                   !this.isCityIsolated(fr) ?
                   (this.isCitySurrounded(fr) ? 3 : 1) :
                   1;
-                building_.tower.$.dimensions.height =
-                  1 + (hMax * (fc.randReal([cs.x, 2 * cs.y])));
+                const towerHeight = 1 + (hMax * (fc.randReal([cs.x, 2 * cs.y])));
+                building_.tower.$.dimensions.height = towerHeight;
 
                 const scaleBound = 0.7 * fc.randReal([cs.x]);
                 building_.tower.$.coordinates.z = 1 + baseHeight;
@@ -635,6 +656,15 @@
                     8, fr.right().randReals(3)
                   )
                 );
+                if ( Math.abs(offsetsBase.x) < 0.3
+                  && Math.abs(offsetsBase.y) < 0.3
+                  && towerHeight > 1
+                  ) {
+                  building_.antenna.$.dimensions.height = 0.2 * towerHeight;
+                  building_.antenna.$.coordinates.z = 1 + baseHeight + towerHeight;
+                } else {
+                  delete building_.antenna;
+                }
 
                 const hasLine = fc.randReal([cs.x, 2 * cs.y]);
                 if (hasLine < 0.5) {
@@ -687,6 +717,7 @@
                 });
 
                 delete building_.tower;
+                delete building_.antenna;
               }
 
               return [block_, ground_, building_];
