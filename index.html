@@ -656,10 +656,10 @@
                     8, fr.right().randReals(3)
                   )
                 );
-                if ( Math.abs(offsetsBase.x) < 0.3
-                  && Math.abs(offsetsBase.y) < 0.3
+                if ( Math.abs(offsetsBase.x) < 0.4
+                  && Math.abs(offsetsBase.y) < 0.4
                   && towerHeight > 1
-                  ) {
+                   ) {
                   building_.antenna.$.dimensions.height = 0.2 * towerHeight;
                   building_.antenna.$.coordinates.z = 1 + baseHeight + towerHeight;
                 } else {
@@ -668,7 +668,7 @@
 
                 const hasLine = fc.randReal([cs.x, 2 * cs.y]);
                 if (hasLine < 0.5) {
-                  const line = {
+                  building_.tower.$.look.mesial.setLine({
                     "color": (
                       bulb == null ?
                       new Color(
@@ -684,8 +684,7 @@
                     ),
                     "margin": 0.1,
                     "orientation": ((hasLine > 0.2) ? "vertical" : "horizontal")
-                  };
-                  building_.tower.$.look.mesial.line = line;
+                  });
                 }
               } else {
                 ground_.$.dimensions.height = 0.2;

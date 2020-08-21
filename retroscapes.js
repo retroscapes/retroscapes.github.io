@@ -596,6 +596,22 @@
       this.spot.color = c;
     }
 
+    setLine(l) {
+      this.line = l;
+    }
+
+    setLineColor(c) {
+      if (this.line == null) {
+        this.line = {"color": c, "lineWidth": 1, "quantity": 3};
+      } else {
+        this.line.color = c;
+      }
+    }
+
+    setLineColor_(c) {
+      this.line.color = c;
+    }
+
     setPattern(p) {
       this.pattern = p;
     }
@@ -742,6 +758,32 @@
       this.top.spot.color = new Color(c);
     }
 
+    setLine(l) {
+      this._defaultComponents();
+      this.mesial.line = JSON.parse(JSON.stringify(l));
+      this.lateral.line = JSON.parse(JSON.stringify(l));
+      this.top.line = JSON.parse(JSON.stringify(l));
+    }
+
+    setLine_(l) {
+      this.mesial.line = l;
+      this.lateral.line = JSON.parse(JSON.stringify(l));
+      this.top.line = JSON.parse(JSON.stringify(l));
+    }
+
+    setLineColor(c) {
+      this._defaultComponentsAttribute("line", {"lineWidth": 1, "quantity": 3});
+      this.mesial.line.color = new Color(c);
+      this.lateral.line.color = new Color(c);
+      this.top.line.color = new Color(c);
+    }
+
+    setLineColor_(c) {
+      this.mesial.line.color = c;
+      this.lateral.line.color = new Color(c);
+      this.top.line.color = new Color(c);
+    }
+
     setPattern(p) {
       this._defaultComponents();
       this.mesial.pattern = JSON.parse(JSON.stringify(p));
@@ -847,6 +889,26 @@
 
     setSpotColor_(c) {
       this.$.look.setSpotColor_(c);
+    }
+
+    setLine(l) {
+      if (this.$.look != null) {
+        this.$.look.setLine(l);
+      }
+    }
+
+    setLine_(l) {
+      this.$.look.setLine(l);
+    }
+
+    setLineColor(c) {
+      if (this.$.look != null) {
+        this.$.look.setLineColor(c);
+      }
+    }
+
+    setLineColor_(c) {
+      this.$.look.setLineColor_(c);
     }
 
     setPattern(p) {
@@ -968,6 +1030,34 @@
     setSpotColor_(c) {
       for (var a in this) {
         this[a].setSpotColor_(c);
+      }
+    }
+
+    setLine(l) {
+      for (var a in this) {
+        if (this[a].setLine != null) {
+          this[a].setLine(l);
+        }
+      }
+    }
+
+    setLine_(l) {
+      for (var a in this) {
+        this[a].setLine_(l);
+      }
+    }
+
+    setLineColor(c) {
+      for (var a in this) {
+        if (this[a].setLineColor != null) {
+          this[a].setLineColor(c);
+        }
+      }
+    }
+
+    setLineColor_(c) {
+      for (var a in this) {
+        this[a].setLineColor_(c);
       }
     }
 
