@@ -1418,6 +1418,13 @@
       const size = (look.spot.size * g.unit) / 750;
       const ratio = (look.spot.ratio == null) ? 1 : look.spot.ratio;
       this.context.fillStyle = new Color(c).rgba();
+
+      // Set luminosity if it is specified.
+      if (look.spot.luminosity != null) {
+        this.context.shadowColor = c.rgb();
+        this.context.shadowBlur = look.spot.luminosity;
+      }
+
       if (look.spot.arrangement == 'regular') {
         const rows = Math.round(Math.sqrt(look.spot.quantity / ratio));
         const cols = Math.round(ratio * rows);
@@ -1459,6 +1466,10 @@
           this.context.fill();
         }
       }
+
+      // Reset luminosity effects.
+      this.context.shadowColor = null;
+      this.context.shadowBlur = 0;
     }
 
     line(light, look, coordinates, v, g, vA, vB, vC) {
@@ -1492,6 +1503,23 @@
             v0.y + ((v1.y - v0.y) * (dr * row)) + ((v2.y - v0.y) * (1 - margin))
           );
           this.context.stroke();
+
+          // Render luminosity effect if it is specified.
+          if (look.line.luminosity != null) {
+            const blur = 0.1 * Math.floor(this.projection.unit * look.line.luminosity);
+            this.context.filter = "blur(" + blur + "px)";
+            this.context.beginPath();
+            this.context.moveTo(
+              v0.x + ((v1.x - v0.x) * (dr * row)) + ((v2.x - v0.x) * margin),
+              v0.y + ((v1.y - v0.y) * (dr * row)) + ((v2.y - v0.y) * margin)
+            );
+            this.context.lineTo(
+              v0.x + ((v1.x - v0.x) * (dr * row)) + ((v2.x - v0.x) * (1 - margin)),
+              v0.y + ((v1.y - v0.y) * (dr * row)) + ((v2.y - v0.y) * (1 - margin))
+            );
+            this.context.stroke();
+            this.context.filter = "none";
+          }
         }
       }
     }
