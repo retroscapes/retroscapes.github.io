@@ -1,88 +1,81 @@
-function Splash(canvasElementId) {
+class Splash {
   /* Example application demonstrating use of the retroscapes library
      to render the interactive splash landscape.
    */
+  constructor(canvasElementId) {
+    this.canvasElementId = canvasElementId;
 
-  // Import utilized classes from the retroscapes library.
-  const Feed = retroscapes.Feed;
-  const Anchors = retroscapes.Anchors;
-  const Color = retroscapes.Color;
-  const Concept = retroscapes.Concept;
-  const Concepts = retroscapes.Concepts;
-  const Scape = retroscapes.Scape;
-  const InteractionDrag = retroscapes.InteractionDrag;
-  const InteractionNudge = retroscapes.InteractionNudge;
-  const Geometry = retroscapes.Geometry;
-  const EffectPlateSquare = retroscapes.EffectPlateSquare;
-  const Canvas = retroscapes.Canvas;
-  const Render = retroscapes.Render;
+    this.feed = new retroscapes.Feed({
+      "quantity": 32, "d": 8,
+      "pAnchor": 0.03, "pTethered": 0.9
+    });
+    this.night = false;
+    this.center = {"x": null, "y": null};
+    this.projection = null;
+  }
 
-  // Internal variables.
-  this.center = {"x": null, "y": null};
-  this.feed = new Feed({
-    "quantity": 32, "d": 8,
-    "pAnchor": 0.03, "pTethered": 0.9
-  });
-  this.night = false;
-
-  // Internal classes and methods.
-  const self = this;
-
-  function geometry() {
-    return new Geometry({
+  _geometry() {
+    return new retroscapes.Geometry({
       "orientation": {"tilt": 30},
       "unit": 30,
     });
   }
 
-  function determineCenter() {
+  _determineCenter() {
     const ps = new URLSearchParams(window.location.search);
     const x = ps.get("x"), y = ps.get("y");
-    self.center = {
+    this.center = {
       "x": (x != null) ? parseInt(x) : Math.floor(Math.random() * 10000),
       "y": (y != null) ? parseInt(y) : Math.floor(Math.random() * 10000)
     };
-    return self.center;
+    return this.center;
   }
 
-  function getProjection() {
-    return self.projection;
+  _getProjection() {
+    return this.projection;
   }
 
-  function setProjection(projection) {
-    self.projection = projection;
-    self.render.setProjection(projection);
+  _setProjection(projection) {
+    this.projection = projection;
+    this.render.setProjection(projection);
   }
 
-  function initialize() {
-    self.scapes = build();
-    self.projection = geometry();
-    self.canvas = new Canvas(
-      document.getElementById(canvasElementId),
-      getProjection,
-      function (center) { redraw(center); },
+  initialize() {
+    this.scapes = this._build();
+    this.projection = this._geometry();
+    const self = this;
+    this.canvas = new retroscapes.Canvas(
+      document.getElementById(this.canvasElementId),
+      function () { return self._getProjection(); },
+      function (center) { self._redraw(center); },
       [
-        new InteractionDrag(),
-        new InteractionNudge(getPlateCenter)
+        new retroscapes.InteractionDrag(),
+        new retroscapes.InteractionNudge(
+          function () { return self._getPlateCenter(); }
+        )
       ]
     );
 
-    self.render = new Render({
-      "canvas": document.getElementById(canvasElementId),
-      "feed": self.feed,
-      "projection": getProjection(),
-      "background": new Color([255, 255, 255]),
+    this.render = new retroscapes.Render({
+      "canvas": document.getElementById(this.canvasElementId),
+      "feed": this.feed,
+      "projection": this._getProjection(),
+      "background": new retroscapes.Color([255, 255, 255]),
       "light": {"top":20, "left":-15, "right":-60},
-      "effects": [new EffectPlateSquare(getProjection)],
+      "effects": [
+        new retroscapes.EffectPlateSquare(
+          function () { return self._getProjection(); }
+        )
+      ],
       "cache": true,
       "precedence": false
     });
 
-    draw();
+    this._draw();
   }
 
-  function getPlateBounds() {
-    const vps = self.render.rendered;
+  _getPlateBounds() {
+    const vps = this.render.rendered;
     var bounds = {"xMin": null, "xMax": null, "yMin": null, "yMax": null};
     for (var i = 0; i < vps.length; i++) {
       if (vps[i].v.coordinates.z == 0) {
@@ -96,21 +89,21 @@ function Splash(canvasElementId) {
     return bounds;
   }
 
-  function getPlateCenter() {
-    const bounds = getPlateBounds();
-    const proj = getProjection();
+  _getPlateCenter() {
+    const bounds = this._getPlateBounds();
+    const proj = this.projection;
     return {
       "x": (bounds.xMin + bounds.xMax) / 2,
       "y": ((bounds.yMin + bounds.yMax) / 2) - (0.75 * (proj.uY + proj.uZ))
     };
   }
 
-  function alignment(vps, callback) {
+  _alignment(vps) {
     // Determine the bounds of the rendered blocks.
-    var bounds = getPlateBounds();
+    var bounds = this._getPlateBounds();
 
     // Determine the dimensinons of the canvas element.
-    const canvasElement = document.getElementById(canvasElementId);
+    const canvasElement = document.getElementById(this.canvasElementId);
     canvasElement.style.marginLeft = '0px';
     canvasElement.style.marginTop = '0px';
     const canvasRect = canvasElement.getBoundingClientRect();
@@ -130,12 +123,10 @@ function Splash(canvasElementId) {
     canvasElement.style.marginLeft = xOffset + 'px';
     canvasElement.style.marginTop = yOffset + 'px';
 
-    if (callback != null) {
-      callback(xLen, yLen, canvasRect);
-    }
+    this._navigation(xLen, yLen, canvasRect);
   }
 
-  function navigation(xLen, yLen, canvasRect) {
+  _navigation(xLen, yLen, canvasRect) {
     // Useful terms for the calculations below.
     const canvasWidthHalf = canvasRect.width / 2;
     const canvasMidX = canvasRect.left + canvasWidthHalf;
@@ -156,11 +147,11 @@ function Splash(canvasElementId) {
       logo.style.fontSize = '80px';
       logo.style.transform = 'rotate(26.5deg) skew(25deg)';
       logo.style.filter = (
-        self.night ?
+        this.night ?
         'drop-shadow(4px -3px 1px #FFFFFF)' :
         'drop-shadow(4px -3px 0px #000000)'
       );
-      logo.style.color = self.night ? '#DBAF48' : '#FCCA56';
+      logo.style.color = this.night ? '#DBAF48' : '#FCCA56';
 
       links.style.position = 'absolute';
       links.style.float = 'right';
@@ -170,13 +161,13 @@ function Splash(canvasElementId) {
       links.style.fontWeight = 'bold';
       links.style.transform = 'rotate(-28deg) skew(-28deg)';
       links.style.filter = (
-        self.night ?
+        this.night ?
         'drop-shadow(-4px -3px 1px #FFFFFF)' :
         'drop-shadow(-4px -3px 0px #000000)'
       );
       const es = document.getElementsByClassName("button");
       for (var i = 0; i < es.length; i++) {
-        if (self.night) {
+        if (this.night) {
           es[i].classList.add("night-a");
           es[i].classList.remove("day-a");
         } else {
@@ -198,7 +189,7 @@ function Splash(canvasElementId) {
       logo.style.fontWeight = 'normal';
       logo.style.transform = 'none';
       logo.style.filter = (
-        self.night ?
+        this.night ?
         'drop-shadow(2px 2px 1px #555555)' :
         'drop-shadow(2px 2px 1px #000000)'
       );
@@ -211,13 +202,13 @@ function Splash(canvasElementId) {
       links.style.fontWeight = 'normal';
       links.style.transform = 'none';
       links.style.filter = (
-        self.night ?
+        this.night ?
         'drop-shadow(1px 1px 1px #888888)' :
         'drop-shadow(1px 2px 1px #000000)'
       );
       const es = document.getElementsByClassName("button");
       for (var i = 0; i < es.length; i++) {
-        if (self.night) {
+        if (this.night) {
           es[i].classList.add("night-a");
           es[i].classList.remove("day-a");
         } else {
@@ -230,75 +221,82 @@ function Splash(canvasElementId) {
     links.style.display = 'block';
   }
 
-  function reinitialize() {
-    const center = getProjection().getCenter();
-    setProjection(geometry());
-    const vps = self.render.render(center, self.scapes, self.feed);
-    alignment(vps, navigation);
+  reinitialize() {
+    const center = this._getProjection().getCenter();
+    this._setProjection(this._geometry());
+    const vps = this.render.render(center, this.scapes, this.feed);
+    this._alignment(vps);
   }
 
-  function draw() {
-    const center = determineCenter();
-    document.getElementById(canvasElementId).style.opacity = 0;
+  _draw() {
+    const center = this._determineCenter();
+    document.getElementById(this.canvasElementId).style.opacity = 0;
     document.getElementById('logo').style.opacity = 0;
     document.getElementById('links').style.opacity = 0;
-    const vps = self.render.render(center, self.scapes, self.feed);
-    alignment(vps, navigation);
-    document.getElementById(canvasElementId).style.opacity = 1;
-    self.render.renderGradually(
+    const vps = this.render.render(center, this.scapes, this.feed);
+    this._alignment(vps);
+    document.getElementById(this.canvasElementId).style.opacity = 1;
+    const self = this;
+    this.render.renderGradually(
       center,
-      self.scapes,
-      self.feed,
+      this.scapes,
+      this.feed,
       function () {
         document.getElementById("logo").style.opacity = 1;
         document.getElementById("links").style.opacity = 1;
-        reinitialize();
+        self.reinitialize();
       }
     );
   }
 
-  function redraw(center) {
-    setProjection(geometry());
-    const c = (center == null) ? determineCenter() : center;
-    const vps = self.render.render(c, self.scapes, self.feed);
-    alignment(vps, navigation);
-    self.render.render(center, self.scapes, self.feed);
-    reinitialize();
+  _redraw(center) {
+    center = (center == null) ? this._getProjection().getCenter() : center;
+    this._setProjection(this._geometry());
+    const c = (center == null) ? this._determineCenter() : center;
+    const vps = this.render.render(c, this.scapes, this.feed);
+    this._alignment(vps);
+    this.render.render(center, this.scapes, this.feed);
+    this.reinitialize();
   }
 
-  function setUrl() {
-    const c = self.canvas.projection().getCenter();
+  setUrl() {
+    const c = this.canvas.projection().getCenter();
     window.location.search = "?x=" + Math.floor(c.x) + "&y=" + Math.floor(c.y);
   }
 
-  function toggleNight() {
+  toggleNight() {
     const switch_ = document.getElementById("switch");
-    self.night = !self.night;
-    if (self.night) {
+    this.night = !this.night;
+    if (this.night) {
       switch_.classList.remove("far");
       switch_.classList.remove("fa-moon");
       switch_.classList.add("fas");
       switch_.classList.add("fa-sun");
       document.body.style.background = "#000000";
-      document.getElementById(canvasElementId).style.background = "#000000";
-      self.render.background = new Color([0, 0, 0]);
-      self.render.light = {"top":-15, "left":10, "right":0};
+      document.getElementById(this.canvasElementId).style.background = "#000000";
+      this.render.background = new retroscapes.Color([0, 0, 0]);
+      this.render.light = {"top":-15, "left":10, "right":0};
     } else {
       switch_.classList.remove("fas");
       switch_.classList.remove("fa-sun");
       switch_.classList.add("far");
       switch_.classList.add("fa-moon");
       document.body.style.background = "#FFFFFF";
-      document.getElementById(canvasElementId).style.background = "#FFFFFF";
-      self.render.background = new Color([255, 255, 255]);
-      self.render.light = {"top":20, "left":-15, "right":-60};
+      document.getElementById(this.canvasElementId).style.background = "#FFFFFF";
+      this.render.background = new retroscapes.Color([255, 255, 255]);
+      this.render.light = {"top":20, "left":-15, "right":-60};
     }
-    self.render.resetCache();
-    self.scapes = build();
-    redraw(getProjection().getCenter());
+    this.render.resetCache();
+    this.scapes = this._build();
+    this._redraw();
   }
 
-  function build() {
+  _build() {
+    // Concise synonyms for classes from the retroscapes library.
+    const Color = retroscapes.Color;
+    const Concept = retroscapes.Concept;
+    const Concepts = retroscapes.Concepts;
+
     var blue = new Color([30, 90, 195]);
     var cyan = new Color([130, 150, 240]);
     var ecru = new Color([155, 165, 120]);
@@ -310,7 +308,7 @@ function Splash(canvasElementId) {
     var ruby = new Color([255, 0, 0]);
     var bulb = null;
 
-    if (self.night) {
+    if (this.night) {
       blue = new Color(blue).darker(35);
       cyan = new Color(cyan).darker(50);
       ecru = new Color(ecru).darker(100);
@@ -460,10 +458,10 @@ function Splash(canvasElementId) {
       "coordinates": {"z": 1, "o": 1}
     });
 
-    const populated = new Anchors(8, 0.02, [2, 2]);
-    const verdant = new Anchors(8, 0.02, [2, 2]);
+    const populated = new retroscapes.Anchors(8, 0.02, [2, 2]);
+    const verdant = new retroscapes.Anchors(8, 0.02, [2, 2]);
 
-    class Example extends Scape {
+    class Example extends retroscapes.Scape {
       render() {
         return ["world"];
       }
@@ -686,12 +684,4 @@ function Splash(canvasElementId) {
 
     return new Example();
   }
-
-  // Methods exported by the `Splash` class.
-  return {
-    "initialize": initialize,
-    "reinitialize": reinitialize,
-    "setUrl": setUrl,
-    "toggleNight": toggleNight
-  };
 }
