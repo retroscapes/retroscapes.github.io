@@ -1195,6 +1195,41 @@
     }
   }
 
+  class EffectPlateSquare extends Effect {
+    calc(coordinates, grid) {
+      const cs = (grid) ?
+          this.projection.getOffsetFromCenterGrid(coordinates) :
+          this.projection.canvasToPlaneGrid(coordinates);
+      cs.x -= 3;
+      cs.y -= 3;
+      const unit = 40 / this.projection.unit;
+      const aspect = this.projection.aspect();
+      var distance = Math.floor(
+        0.88 * unit * (this.projection.dimensions.width / 100)
+      );
+      const start = 0.8;
+      const end = 0.8;
+      const slope = 0;
+      const aDist = Math.abs((cs.y + (slope * cs.x))/(distance * end));
+      const bDist = Math.abs((cs.x + (slope * cs.y))/(distance * end));
+      return [start, aDist, bDist];
+    }
+
+    render(coordinates) {
+      const calculated = this.calc(coordinates, true);
+      const start = calculated[0], aDist = calculated[1], bDist = calculated[2];
+      return (
+        (aDist < start && bDist < start) ?
+        true :
+        Math.abs(
+          (aDist > bDist) ?
+          100 * ((aDist - start)/(1 - start)) :
+          100 * ((bDist - start)/(1 - start))
+        ) < 100
+      );
+    }
+  }
+
   class Interaction {
     /** Base class for canvas interactions.
      */
@@ -2230,6 +2265,7 @@
     "Scape": Scape,
     "Geometry": Geometry,
     "Effect": Effect,
+    "EffectPlateSquare": EffectPlateSquare,
     "Interaction": Interaction,
     "InteractionDrag": InteractionDrag,
     "InteractionNudge": InteractionNudge,
