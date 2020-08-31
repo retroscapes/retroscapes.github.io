@@ -148,6 +148,7 @@ class Splash extends Sample {
       document.getElementById(this.canvasElementId).style.background = "#000000";
       this.render.background = new retroscapes.Color([0, 0, 0]);
       this.render.light = {"top":-15, "left":10, "right":0};
+      document.getElementById("footer").style.boxShadow = "0px 0px 15px #777777";
     } else {
       switch_.classList.remove("fas");
       switch_.classList.remove("fa-sun");
@@ -157,6 +158,7 @@ class Splash extends Sample {
       document.getElementById(this.canvasElementId).style.background = "#FFFFFF";
       this.render.background = new retroscapes.Color([255, 255, 255]);
       this.render.light = {"top":20, "left":-15, "right":-60};
+      document.getElementById("footer").style.boxShadow = "0px 0px 15px #CCCCCC";
     }
     this.render.resetCache();
     this.scapes = this._build();

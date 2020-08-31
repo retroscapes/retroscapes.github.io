@@ -21,12 +21,17 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <style>
-      html { }
+      html { height:100%; }
       body {
-        min-height:650px; max-height:650px;
-        margin:80px 0px 0px 0px; padding:0px 50px 0px 50px;
-        text-align:center;
+        display:flex; flex-direction:column;
+        height:100vh; padding:80px 0px 0px 0px;
         background-color:#FFFFFF;
+      }
+      .splash {
+        min-height:650px; width:100%;
+        margin:0px; padding:0px;
+        text-align:center;
+        background-color:none;
       }
       a { text-decoration:none; }
       a:hover { text-decoration:none; color:#000000; }
@@ -66,8 +71,39 @@
       .night-a { color:#DBAF48; }
       .night-a:hover { color:#FFDF96; }
       .icon {}
+      footer {
+        width:100%;
+        margin:auto auto 0 auto;
+        padding:16px 0px 16px 0px;
+        border-top:1px solid #D0D0D0;
+        background-color:#FFFFFF;
+        color:#707070;
+        box-shadow:0px 0px 15px #CCCCCC;
+      }
+      footer .container { padding-left:20px; padding-right:20px; }
+      footer a { color:#707070; }
+      footer a:hover { text-decoration:underline; color:#707070; }
+      footer .card-deck { margin-bottom:0px !important; }
+      footer .card {
+        margin-bottom:0px !important; border:0px; background-color:#FFFFFFF;
+      }
+      footer .card-deck-copyright {
+        height:26x !important;
+        font-size:10px;
+      }
+      footer .card-copyright {
+        height:26px !important;
+        padding:0px 16px 0px 16px;
+        font-size:12px !important;
+      }
+      footer .card-body-links { padding:8px 20px 0px 20px; }
+      footer .card-body-links-internal { float:left; }
+      footer .card-body-links-external { float:right; }
+      footer .link { margin:0px 25px 0px 0px; white-space:nowrap; font-size:14px; }
+      footer .icon { margin:0px 10px 0px 0px; font-size:20px; }
+      footer .icon-last { margin:0px 0px 0px 0px; font-size:20px; }
       @media all and (max-width:900px) {
-        body { margin:0px; padding:0px 50px 0px 50px; }
+        body { margin:0px; padding:0px; }
         .logo { color:#DBA744; }
         .day-a { color:#9D9D9D; }
         .day-a:hover { color:#DBA744; }
@@ -89,25 +125,48 @@
     </script>
   </head>
   <body onload="splash.initialize();">
-    <canvas id="canvas-splash"></canvas>
-    <div class="logo noselect" id="logo">retroscapes</div>
-    <div class="links noselect" id="links">
-      <span class="icon">
-        <a href="javascript: void(0)" onclick="splash.toggleNight();" class="button">
-          <i id="switch" class="far fa-moon"></i>
-        </a>
-      </span>
-      <span class="icon">
-        <a href="javascript: void(0)" onclick="splash.setUrl();" class="button">
-          <i class="far fa-compass"></i>
-        </a>
-      </span>
-      <span class="icon">
-        <a href="https://github.com/retroscapes" class="button">
-          <i class="fab fa-github"></i>
-        </a>
-      </span>
-    </div>
+    <div class="splash">
+      <canvas id="canvas-splash"></canvas>
+      <div class="logo noselect" id="logo">retroscapes</div>
+      <div class="links noselect" id="links">
+        <span class="icon">
+          <a href="javascript: void(0)" onclick="splash.toggleNight();" class="button">
+            <i id="switch" class="far fa-moon"></i>
+          </a>
+        </span>
+        <span class="icon">
+          <a href="javascript: void(0)" onclick="splash.setUrl();" class="button">
+            <i class="far fa-compass"></i>
+          </a>
+        </span>
+        <span class="icon">
+          <a href="https://github.com/retroscapes" class="button">
+            <i class="fab fa-github"></i>
+          </a>
+        </span>
+      </div>
+    </div>                                
+    <footer id="footer">
+      <div class="container noselect">
+        <div class="card-deck mb-3">
+          <div class="card mb-4">
+            <div class="card-body card-body-links">
+              <div class="card-body-links-internal">
+                <span class="link"><span id="license-phrase">Made available under the </span><a href="http://opensource.org/licenses/mit-license.html">MIT License</a></span>
+              </div>
+              <div class="card-body-links-external">
+                <span class="icon"><a href="mailto:contact@retroscapes.io"><i class="far fa-envelope"></i></a></span>
+                <span class="icon-last"><a href="https://github.com/retroscapes"><i class="fab fa-github"></i></a></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-deck mb-3 card-deck-copyright">
+          <div class="card mb-4 card-copyright">
+          </div>
+        </div>
+      </div>
+    </footer>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   </body>
