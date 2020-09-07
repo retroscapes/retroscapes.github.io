@@ -1,28 +1,29 @@
-class Sample {
+class Sample { // eslint-disable-line no-unused-vars
+  /* eslint-disable no-undef */
   /* Base/template for sample application demonstrating use of the
      retroscapes library.
    */
-  constructor(canvasElementId) {
+  constructor (canvasElementId) {
     this.canvasElementId = canvasElementId;
 
     this.feed = new retroscapes.Feed({
-      "quantity": 32, "d": 8,
-      "pAnchor": 0.03, "pTethered": 0.9
+      "quantity": 32, "d": 8, "pAnchor": 0.03, "pTethered": 0.9
     });
-    this.center = {"x": null, "y": null};
+    this.center = { "x": null, "y": null };
     this.projection = null;
   }
 
-  _geometry() {
+  _geometry () {
     return new retroscapes.Geometry({
-      "orientation": {"tilt": 30},
-      "unit": 30,
+      "orientation": { "tilt": 30 },
+      "unit": 30
     });
   }
 
-  _determineCenter() {
+  _determineCenter () {
     const ps = new URLSearchParams(window.location.search);
-    const x = ps.get("x"), y = ps.get("y");
+    const x = ps.get("x");
+    const y = ps.get("y");
     this.center = {
       "x": (x != null) ? parseInt(x) : Math.floor(Math.random() * 10000),
       "y": (y != null) ? parseInt(y) : Math.floor(Math.random() * 10000)
@@ -30,16 +31,16 @@ class Sample {
     return this.center;
   }
 
-  _getProjection() {
+  _getProjection () {
     return this.projection;
   }
 
-  _setProjection(projection) {
+  _setProjection (projection) {
     this.projection = projection;
     this.render.setProjection(projection);
   }
 
-  initialize() {
+  initialize () {
     this.scapes = this._build();
     this.projection = this._geometry();
     const self = this;
@@ -60,7 +61,7 @@ class Sample {
       "feed": this.feed,
       "projection": this._getProjection(),
       "background": new retroscapes.Color([255, 255, 255]),
-      "light": {"top":20, "left":-15, "right":-60},
+      "light": { "top": 20, "left": -15, "right": -60 },
       "effects": [
         new retroscapes.EffectPlateSquare(
           function () { return self._getProjection(); }
@@ -73,12 +74,13 @@ class Sample {
     this._draw();
   }
 
-  _getPlateBounds() {
+  _getPlateBounds () {
     const vps = this.render.rendered;
-    var bounds = {"xMin": null, "xMax": null, "yMin": null, "yMax": null};
-    for (var i = 0; i < vps.length; i++) {
-      if (vps[i].v.coordinates.z == 0) {
-        const x = vps[i].p.coordinates.x, y = vps[i].p.coordinates.y;
+    const bounds = { "xMin": null, "xMax": null, "yMin": null, "yMax": null };
+    for (let i = 0; i < vps.length; i++) {
+      if (vps[i].v.coordinates.z === 0) {
+        const x = vps[i].p.coordinates.x;
+        const y = vps[i].p.coordinates.y;
         bounds.xMin = (bounds.xMin == null) ? x : Math.min(x, bounds.xMin);
         bounds.yMin = (bounds.yMin == null) ? y : Math.min(y, bounds.yMin);
         bounds.xMax = (bounds.xMax == null) ? x : Math.max(x, bounds.xMax);
@@ -88,7 +90,7 @@ class Sample {
     return bounds;
   }
 
-  _getPlateCenter() {
+  _getPlateCenter () {
     const bounds = this._getPlateBounds();
     const proj = this.projection;
     return {
@@ -97,9 +99,9 @@ class Sample {
     };
   }
 
-  _alignment(vps) {
+  _alignment (vps) {
     // Determine the bounds of the rendered blocks.
-    var bounds = this._getPlateBounds();
+    const bounds = this._getPlateBounds();
 
     // Determine the dimensinons of the canvas element.
     const canvasElement = document.getElementById(this.canvasElementId);
@@ -110,8 +112,6 @@ class Sample {
     // Useful terms for the calculations below.
     const xLen = bounds.xMax - bounds.xMin;
     const yLen = bounds.yMax - bounds.yMin;
-    const canvasWidthHalf = canvasRect.width / 2;
-    const canvasMidX = canvasRect.left + canvasWidthHalf;
 
     // Shift the canvas element to accommodate for the extent to which
     // the rendered landscape deviates from the exact center of the canvas.
@@ -123,14 +123,14 @@ class Sample {
     canvasElement.style.marginTop = yOffset + 'px';
   }
 
-  reinitialize() {
+  reinitialize () {
     const center = this._getProjection().getCenter();
     this._setProjection(this._geometry());
     const vps = this.render.render(center, this.scapes, this.feed);
     this._alignment(vps);
   }
 
-  _draw() {
+  _draw () {
     const center = this._determineCenter();
     document.getElementById(this.canvasElementId).style.opacity = 0;
     document.getElementById('logo').style.opacity = 0;
@@ -151,7 +151,7 @@ class Sample {
     );
   }
 
-  _redraw(center) {
+  _redraw (center) {
     center = (center == null) ? this._getProjection().getCenter() : center;
     this._setProjection(this._geometry());
     const c = (center == null) ? this._determineCenter() : center;
@@ -161,13 +161,13 @@ class Sample {
     this.reinitialize();
   }
 
-  _build() {
+  _build () {
     class Example extends retroscapes.Scape {
-      render() {
+      render () {
         return ["world"];
       }
 
-      world(cs, fr) {
+      world (cs, fr) {
         return [];
       }
     }

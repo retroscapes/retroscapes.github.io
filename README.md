@@ -7,3 +7,11 @@ Any released version of the retroscapes library can be incorporated as shown bel
 ```html
 <script src="https://retroscapes.codes/0.1.0/retroscapes.js"></script>
 ```
+
+## Conventions
+
+Style conventions for the examples that appear on the [main page](https://retroscapes.io) are enforced using [ESLint](https://eslint.org/):
+```shell
+npm i --save-dev eslint eslint-config-standard eslint-plugin-import eslint-plugin-node eslint-plugin-promise
+eslint src/*
+```

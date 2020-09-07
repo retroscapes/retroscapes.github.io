@@ -1,16 +1,17 @@
-class Splash extends Sample {
+class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
+  /* eslint-disable no-undef */
   /* Example application demonstrating use of the retroscapes library
      to render the interactive splash landscape.
    */
-  constructor(canvasElementId) {
+  constructor (canvasElementId) {
     super(canvasElementId);
 
     this.night = false;
   }
 
-  _alignment(vps) {
+  _alignment (vps) {
     // Determine the bounds of the rendered blocks.
-    var bounds = this._getPlateBounds();
+    const bounds = this._getPlateBounds();
 
     // Determine the dimensinons of the canvas element.
     const canvasElement = document.getElementById(this.canvasElementId);
@@ -21,8 +22,6 @@ class Splash extends Sample {
     // Useful terms for the calculations below.
     const xLen = bounds.xMax - bounds.xMin;
     const yLen = bounds.yMax - bounds.yMin;
-    const canvasWidthHalf = canvasRect.width / 2;
-    const canvasMidX = canvasRect.left + canvasWidthHalf;
 
     // Shift the canvas element to accommodate for the extent to which
     // the rendered landscape deviates from the exact center of the canvas.
@@ -36,7 +35,7 @@ class Splash extends Sample {
     this._navigation(xLen, yLen, canvasRect);
   }
 
-  _navigation(xLen, yLen, canvasRect) {
+  _navigation (xLen, yLen, canvasRect) {
     // Useful terms for the calculations below.
     const canvasWidthHalf = canvasRect.width / 2;
     const canvasMidX = canvasRect.left + canvasWidthHalf;
@@ -49,7 +48,7 @@ class Splash extends Sample {
       const logoTop = (canvasRect.height / 2) + 54;
       const logoLeft = canvasMidX - (xLen / 2) - 28;
       const linksTop = logoTop;
-      const linksLeft =  canvasRect.right - canvasWidthHalf + (0.985 * yLen) - 125;
+      const linksLeft = canvasRect.right - canvasWidthHalf + (0.985 * yLen) - 125;
 
       logo.style.position = 'absolute';
       logo.style.left = logoLeft + 'px';
@@ -57,9 +56,9 @@ class Splash extends Sample {
       logo.style.fontSize = '80px';
       logo.style.transform = 'rotate(26.5deg) skew(25deg)';
       logo.style.filter = (
-        this.night ?
-        'drop-shadow(4px -3px 1px #FFFFFF)' :
-        'drop-shadow(4px -3px 0px #000000)'
+        this.night
+          ? 'drop-shadow(4px -3px 1px #FFFFFF)'
+          : 'drop-shadow(4px -3px 0px #000000)'
       );
       logo.style.color = this.night ? '#DBAF48' : '#FCCA56';
 
@@ -71,12 +70,12 @@ class Splash extends Sample {
       links.style.fontWeight = 'bold';
       links.style.transform = 'rotate(-28deg) skew(-28deg)';
       links.style.filter = (
-        this.night ?
-        'drop-shadow(-4px -3px 1px #FFFFFF)' :
-        'drop-shadow(-4px -3px 0px #000000)'
+        this.night
+          ? 'drop-shadow(-4px -3px 1px #FFFFFF)'
+          : 'drop-shadow(-4px -3px 0px #000000)'
       );
       const es = document.getElementsByClassName("button");
-      for (var i = 0; i < es.length; i++) {
+      for (let i = 0; i < es.length; i++) {
         if (this.night) {
           es[i].classList.add("night-a");
           es[i].classList.remove("day-a");
@@ -99,9 +98,9 @@ class Splash extends Sample {
       logo.style.fontWeight = 'normal';
       logo.style.transform = 'none';
       logo.style.filter = (
-        this.night ?
-        'drop-shadow(2px 2px 1px #555555)' :
-        'drop-shadow(2px 2px 1px #000000)'
+        this.night
+          ? 'drop-shadow(2px 2px 1px #555555)'
+          : 'drop-shadow(2px 2px 1px #000000)'
       );
 
       links.style.position = 'absolute';
@@ -112,12 +111,12 @@ class Splash extends Sample {
       links.style.fontWeight = 'normal';
       links.style.transform = 'none';
       links.style.filter = (
-        this.night ?
-        'drop-shadow(1px 1px 1px #888888)' :
-        'drop-shadow(1px 2px 1px #000000)'
+        this.night
+          ? 'drop-shadow(1px 1px 1px #888888)'
+          : 'drop-shadow(1px 2px 1px #000000)'
       );
       const es = document.getElementsByClassName("button");
-      for (var i = 0; i < es.length; i++) {
+      for (let i = 0; i < es.length; i++) {
         if (this.night) {
           es[i].classList.add("night-a");
           es[i].classList.remove("day-a");
@@ -131,12 +130,12 @@ class Splash extends Sample {
     links.style.display = 'block';
   }
 
-  setUrl() {
+  setUrl () {
     const c = this.canvas.projection().getCenter();
     window.location.search = "?x=" + Math.floor(c.x) + "&y=" + Math.floor(c.y);
   }
 
-  toggleNight() {
+  toggleNight () {
     const switch_ = document.getElementById("switch");
     this.night = !this.night;
     if (this.night) {
@@ -147,7 +146,7 @@ class Splash extends Sample {
       document.body.style.background = "#000000";
       document.getElementById(this.canvasElementId).style.background = "#000000";
       this.render.background = new retroscapes.Color([0, 0, 0]);
-      this.render.light = {"top":-15, "left":10, "right":0};
+      this.render.light = { "top": -15, "left": 10, "right": 0 };
       document.getElementById("footer").style.boxShadow = "0px 0px 15px #777777";
     } else {
       switch_.classList.remove("fas");
@@ -157,7 +156,7 @@ class Splash extends Sample {
       document.body.style.background = "#FFFFFF";
       document.getElementById(this.canvasElementId).style.background = "#FFFFFF";
       this.render.background = new retroscapes.Color([255, 255, 255]);
-      this.render.light = {"top":20, "left":-15, "right":-60};
+      this.render.light = { "top": 20, "left": -15, "right": -60 };
       document.getElementById("footer").style.boxShadow = "0px 0px 15px #CCCCCC";
     }
     this.render.resetCache();
@@ -165,22 +164,22 @@ class Splash extends Sample {
     this._redraw();
   }
 
-  _build() {
+  _build () {
     // Concise synonyms for classes from the retroscapes library.
     const Color = retroscapes.Color;
     const Concept = retroscapes.Concept;
     const Concepts = retroscapes.Concepts;
 
-    var blue = new Color([30, 90, 195]);
-    var cyan = new Color([130, 150, 240]);
-    var ecru = new Color([155, 165, 120]);
-    var sage = new Color("#8ABD91");
-    var clay = new Color([115, 90, 93]);
-    var gray = new Color([155, 145, 155]);
-    var salt = new Color(gray).lighter(50);
-    var coal = new Color([0, 0, 0]);
-    var ruby = new Color([255, 0, 0]);
-    var bulb = null;
+    let blue = new Color([30, 90, 195]);
+    let cyan = new Color([130, 150, 240]);
+    let ecru = new Color([155, 165, 120]);
+    let sage = new Color("#8ABD91");
+    let clay = new Color([115, 90, 93]);
+    let gray = new Color([155, 145, 155]);
+    let salt = new Color(gray).lighter(50);
+    const coal = new Color([0, 0, 0]);
+    const ruby = new Color([255, 0, 0]);
+    let bulb = null;
 
     if (this.night) {
       blue = new Color(blue).darker(35);
@@ -194,153 +193,151 @@ class Splash extends Sample {
     }
 
     const block = new Concept({
-      "dimensions": {"height": 1},
-      "form": {"shape": "prism"},
+      "dimensions": { "height": 1 },
+      "form": { "shape": "prism" },
       "look": {
-        "face": {"color": ecru.lighter(50)}
+        "face": { "color": ecru.lighter(50) }
       },
-      "coordinates": {"z": 0, "o": 0}
+      "coordinates": { "z": 0, "o": 0 }
     });
 
     const ground = new Concept({
-      "dimensions": {"height": 0},
-      "form": {"shape": "prism"},
+      "dimensions": { "height": 0 },
+      "form": { "shape": "prism" },
       "look": {
-        "face": {"color": ecru.lighter(50)}
+        "face": { "color": ecru.lighter(50) }
       },
-      "coordinates": {"z": 1, "o": 0}
+      "coordinates": { "z": 1, "o": 0 }
     });
 
     const building = new Concepts({
       "base": new Concept({
         "dimensions": {},
-        "form": {"shape": "prism"},
+        "form": { "shape": "prism" },
         "look": {
           "mesial": {
             "face": {},
-            "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []}
+            "edge": { "color": coal, "lineWidth": 0.5, "lineDash": [] }
           },
           "lateral": {
             "face": {},
-            "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []}
+            "edge": { "color": coal, "lineWidth": 0.5, "lineDash": [] }
           },
           "top": {
             "face": {},
-            "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []}
+            "edge": { "color": coal, "lineWidth": 0.5, "lineDash": [] }
           }
         },
-        "coordinates": {"z": 1, "o": 1}
+        "coordinates": { "z": 1, "o": 1 }
       }),
       "tower": new Concept({
         "dimensions": {},
-        "form": {"shape": "prism"},
+        "form": { "shape": "prism" },
         "look": {
           "mesial": {
             "face": {},
-            "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []}
+            "edge": { "color": coal, "lineWidth": 0.5, "lineDash": [] }
           },
           "lateral": {
             "face": {},
-            "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []}
+            "edge": { "color": coal, "lineWidth": 0.5, "lineDash": [] }
           },
           "top": {
             "face": {},
-            "edge": {"color": coal, "lineWidth": 0.5, "lineDash": []}
+            "edge": { "color": coal, "lineWidth": 0.5, "lineDash": [] }
           }
         },
-        "coordinates": {"z": 0, "o": 2}
+        "coordinates": { "z": 0, "o": 2 }
       }),
       "antenna": new Concept({
-        "dimensions": {"height": 0.6},
-        "form": {"shape": "prism"},
+        "dimensions": { "height": 0.6 },
+        "form": { "shape": "prism" },
         "look": {
           "mesial": {
-            "face": {"color": gray},
-            "edge": {"color": coal, "lineWidth": 0.2, "lineDash": []}
+            "face": { "color": gray },
+            "edge": { "color": coal, "lineWidth": 0.2, "lineDash": [] }
           },
           "lateral": {
-            "face": {"color": gray},
-            "edge": {"color": coal, "lineWidth": 0.2, "lineDash": []}
+            "face": { "color": gray },
+            "edge": { "color": coal, "lineWidth": 0.2, "lineDash": [] }
           },
           "top": {
-            "face": {"color": ruby, "luminosity": 1},
-            "edge": {"color": ruby, "lineWidth": 0.5, "lineDash": [], "luminosity": 1}
+            "face": { "color": ruby, "luminosity": 1 },
+            "edge": { "color": ruby, "lineWidth": 0.5, "lineDash": [], "luminosity": 1 }
           }
         },
-        "coordinates": {"z": 0, "o": 3},
-        "scales": {"x": 0.1, "y": 0.1, "z": 1}
+        "coordinates": { "z": 0, "o": 3 },
+        "scales": { "x": 0.1, "y": 0.1, "z": 1 }
       })
     });
 
     const shore = new Concept({
-      "dimensions": {"height": 0.2},
-      "form": {"shape": "prism"},
+      "dimensions": { "height": 0.2 },
+      "form": { "shape": "prism" },
       "look": {
-        "mesial": {"face": {"color": ecru}},
-        "lateral": {"face": {"color": ecru}},
+        "mesial": { "face": { "color": ecru } },
+        "lateral": { "face": { "color": ecru } },
         "top": {
-          "face": {"color": ecru.lighter(50), "within": "15%"},
-          "edge": {"color": ecru.lighter(30), "lineWidth": 1.05, "lineDash": []}
+          "face": { "color": ecru.lighter(50), "within": "15%" },
+          "edge": { "color": ecru.lighter(30), "lineWidth": 1.05, "lineDash": [] }
         }
       },
-      "coordinates": {"z": 1, "o": 0}
+      "coordinates": { "z": 1, "o": 0 }
     });
 
     const greenery = new Concept({
       "dimensions": {
-        "height": 0, "quantity": 10, "radius": 0.4, "spread": 0.8,
-        "positional": true
+        "height": 0, "quantity": 10, "radius": 0.4, "spread": 0.8, "positional": true
       },
-      "form": {"shape": "cloud", "particle": "point"},
+      "form": { "shape": "cloud", "particle": "point" },
       "look": {
-        "face": {"color": new Color([0, 0, 0, 0])},
+        "face": { "color": new Color([0, 0, 0, 0]) },
         "edge": {
           "color": new Color(sage).darker(6),
           "lineWidth": 1,
           "lineDash": []
         },
-        "angles": [(1.5 * Math.PI) - .7, (1.5 * Math.PI) + .7]
+        "angles": [(1.5 * Math.PI) - 0.7, (1.5 * Math.PI) + 0.7]
       },
-      "coordinates": {"z": 1, "o": 1}
+      "coordinates": { "z": 1, "o": 1 }
     });
 
     const ocean = new Concept({
-      "dimensions": {"height": 1},
-      "form": {"shape": "prism"},
+      "dimensions": { "height": 1 },
+      "form": { "shape": "prism" },
       "look": {
-        "face": {"color": blue, "within": "10%"}
+        "face": { "color": blue, "within": "10%" }
       },
-      "coordinates": {"z": 0, "o": 0},
-      "scales": {"x": 1, "y": 1, "z": 1}
+      "coordinates": { "z": 0, "o": 0 },
+      "scales": { "x": 1, "y": 1, "z": 1 }
     });
 
     const foam = new Concept({
       "dimensions": {
-        "height": 0, "quantity": 2, "radius": 0.5, "spread": 0.6,
-        "positional": true
+        "height": 0, "quantity": 2, "radius": 0.5, "spread": 0.6, "positional": true
       },
-      "form": {"shape": "cloud", "particle": "bubble"},
+      "form": { "shape": "cloud", "particle": "bubble" },
       "look": {
-        "face": {"color": new Color([0, 0, 0, 0])},
+        "face": { "color": new Color([0, 0, 0, 0]) },
         "edge": {
           "color": new Color(cyan),
           "lineWidth": 1,
           "lineDash": []
         },
-        "angles": [(1.5 * Math.PI) - .7, (1.5 * Math.PI) + .7]
+        "angles": [(1.5 * Math.PI) - 0.7, (1.5 * Math.PI) + 0.7]
       },
-      "coordinates": {"z": 1, "o": 1}
+      "coordinates": { "z": 1, "o": 1 }
     });
 
     const populated = new retroscapes.Anchors(8, 0.02, [2, 2]);
     const verdant = new retroscapes.Anchors(8, 0.02, [2, 2]);
 
     class Example extends retroscapes.Scape {
-      render() {
+      render () {
         return ["world"];
       }
 
-      world(cs, fr) {
+      world (cs, fr) {
         cs = this.coordinates(cs);
         if (this.isCity(fr)) {
           return this.isCityIsolated(fr) ? this.shore(cs, fr) : this.city(cs, fr);
@@ -349,21 +346,21 @@ class Splash extends Sample {
         }
       }
 
-      city(cs, fr) {
+      city (cs, fr) {
         const fc = fr.center();
 
-        var block_ = block.instance();
+        const block_ = block.instance();
         block_.$.coordinates.update(cs);
         block_.$.feed = fc;
         block_.setFaceColor_(
           new Color(block_.$.look.face.color).nearby(16, fc.randReals(3)).darker(20)
         );
 
-        var ground_ = ground.instance();
+        const ground_ = ground.instance();
         ground_.$.coordinates.update(cs);
         ground_.$.feed = fc;
 
-        var building_ = building.instance();
+        const building_ = building.instance();
         building_.$.coordinates = cs;
 
         building_.base.$.feed = fr.up();
@@ -391,9 +388,9 @@ class Splash extends Sample {
 
           building_.tower.$.feed = fr.down();
           const hMax =
-            !this.isCityIsolated(fr) ?
-            (this.isCitySurrounded(fr) ? 3 : 1) :
-            1;
+            (!this.isCityIsolated(fr))
+              ? (this.isCitySurrounded(fr) ? 3 : 1)
+              : 1;
           const towerHeight = 1 + (hMax * (fc.randReal([cs.x, 2 * cs.y])));
           building_.tower.$.dimensions.height = towerHeight;
 
@@ -414,10 +411,11 @@ class Splash extends Sample {
               8, fr.right().randReals(3)
             )
           );
-          if ( Math.abs(offsetsBase.x) < 0.4
-            && Math.abs(offsetsBase.y) < 0.4
-            && towerHeight > 1
-             ) {
+          if (
+            Math.abs(offsetsBase.x) < 0.4 &&
+            Math.abs(offsetsBase.y) < 0.4 &&
+            towerHeight > 1
+          ) {
             building_.antenna.$.dimensions.height = 0.2 * towerHeight;
             building_.antenna.$.coordinates.z = 1 + baseHeight + towerHeight;
           } else {
@@ -428,17 +426,17 @@ class Splash extends Sample {
           if (hasLine < 0.5) {
             building_.tower.$.look.mesial.setLine({
               "color": (
-                bulb == null ?
-                new Color(
-                  building_.tower.$.look.top.face.color
-                ).lighterOrDarker(hasLine < 0.25 ? -30 : -60) :
-                bulb
+                bulb == null
+                  ? new Color(
+                    building_.tower.$.look.top.face.color
+                  ).lighterOrDarker(hasLine < 0.25 ? -30 : -60)
+                  : bulb
               ),
               "lineWidth": 1,
               "quantity": 2 + (
-                (hasLine > 0.2) ?
-                Math.round(3.5 * hasLine) :
-                building_.tower.$.dimensions.height * 5
+                (hasLine > 0.2)
+                  ? Math.round(3.5 * hasLine)
+                  : building_.tower.$.dimensions.height * 5
               ),
               "margin": 0.1,
               "orientation": ((hasLine > 0.2) ? "vertical" : "horizontal")
@@ -451,11 +449,11 @@ class Splash extends Sample {
             new Color(clay).lighter(35).nearby(15, fr.up().randReals(3));
           const spot = {
             "color": (
-              bulb == null ?
-              new Color(baseColor).lighterOrDarker(
-                fc.randReal([cs.y, cs.x]) > 0.5 ? 50 : -50
-              ) :
-              bulb
+              bulb == null
+                ? new Color(baseColor).lighterOrDarker(
+                  fc.randReal([cs.y, cs.x]) > 0.5 ? 50 : -50
+                )
+                : bulb
             ),
             "size": 1.2,
             "ratio": 0.75,
@@ -480,8 +478,8 @@ class Splash extends Sample {
         return [block_, ground_, building_];
       }
 
-      shore(cs, fr) {
-        var block_ = block.instance();
+      shore (cs, fr) {
+        const block_ = block.instance();
         block_.$.coordinates.update(cs);
         block_.$.feed = fr.center();
         block_.setFaceColor_(
@@ -490,16 +488,16 @@ class Splash extends Sample {
           ).darker(20)
         );
 
-        var shore_ = shore.instance();
+        const shore_ = shore.instance();
         shore_.$.coordinates.update(cs);
         shore_.$.feed = fr.center();
-        var instances = [];
+        let instances = [];
         if (fr.countAround(this.isCity) <= 1 && fr.randReal([cs.y, cs.x]) > 0.1) {
           shore_.$.look.top.setFaceColor_(new Color(sage));
           shore_.$.look.top.setEdgeColor(new Color(sage).darker(5));
 
           if (verdant.anchored(cs)) {
-            var greenery_ = greenery.instance();
+            const greenery_ = greenery.instance();
             greenery_.$.coordinates.update(cs);
             greenery_.$.feed = fr.center();
             instances = [block_, shore_, greenery_];
@@ -507,15 +505,15 @@ class Splash extends Sample {
             instances = [block_, shore_];
           }
         } else {
-          shore_.$.look.top.setPattern({"rows": 2, "columns": 2});
+          shore_.$.look.top.setPattern({ "rows": 2, "columns": 2 });
           instances = [block_, shore_];
         }
 
         return instances;
       }
 
-      ocean(cs, fr) {
-        var ocean_ = ocean.instance();
+      ocean (cs, fr) {
+        const ocean_ = ocean.instance();
         ocean_.$.coordinates.update(cs);
         ocean_.$.feed = fr.center();
         ocean_.setFaceColor_(
@@ -523,7 +521,7 @@ class Splash extends Sample {
         );
 
         if (this.isOceanDeep(fr)) {
-          var foam_ = foam.instance();
+          const foam_ = foam.instance();
           foam_.$.coordinates.update(cs);
           foam_.$.feed = fr.center();
           return [ocean_, foam_];
@@ -532,26 +530,26 @@ class Splash extends Sample {
         }
       }
 
-      isCity(fx) {
+      isCity (fx) {
         return fx.randBoolWithProb(0.11);
       }
 
-      isCityIsolated(fr) {
+      isCityIsolated (fr) {
         return this.isCity(fr) && fr.noneOnAxes(this.isCity);
       }
 
-      isCitySurrounded(fr) {
+      isCitySurrounded (fr) {
         return this.isCity(fr) && fr.allOnAxes(this.isCity);
       }
 
-      isShore(fr) {
+      isShore (fr) {
         return !this.isCity(fr) && fr.countOnRing(this.isCity) > 0;
       }
 
-      isOceanDeep(fr) {
+      isOceanDeep (fr) {
         return (
           fr.relative(1, 1).randBoolWithProb(0.3) &&
-          fr.countAround(this.isCity) == 0
+          fr.countAround(this.isCity) === 0
         );
       }
     }
