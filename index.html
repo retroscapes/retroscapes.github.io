@@ -16,7 +16,7 @@
       newLink.href = 'data:image/png;base64,'+favIcon;
       docHead.appendChild(newLink);
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Yesteryear&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Yesteryear&family=Raleway&display=auto"
           rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
@@ -26,6 +26,7 @@
         display:flex; flex-direction:column;
         height:100vh; padding:80px 0px 0px 0px;
         background-color:#FFFFFF;
+        font-family:'Raleway',"Segoe UI",Roboto,"Helvetica Neue",Verdana,Arial,"Noto Sans",sans-serif;
       }
       .splash {
         min-height:650px; width:100%;
@@ -45,7 +46,7 @@
                                        supported by Chrome, Edge, Opera and Firefox */
       }
       #canvas-splash {
-        width:94%; max-width:1260px; height:640px;
+        width:90%; max-width:1260px; height:640px;
         margin:auto;
         background:#FFFFFF;
         border:0px solid #FFFFFF;
@@ -81,8 +82,8 @@
         box-shadow:0px 0px 15px #CCCCCC;
       }
       footer .container { padding-left:20px; padding-right:20px; }
-      footer a { color:#707070; }
-      footer a:hover { text-decoration:underline; color:#707070; }
+      footer a { font-weight:bold; color:#505050; }
+      footer a:hover { text-decoration:underline; color:#505050; }
       footer .card-deck { margin-bottom:0px !important; }
       footer .card {
         margin-bottom:0px !important; border:0px; background-color:#FFFFFFF;
@@ -100,8 +101,8 @@
       footer .card-body-links-internal { float:left; }
       footer .card-body-links-external { float:right; }
       footer .link { margin:0px 25px 0px 0px; white-space:nowrap; font-size:14px; }
-      footer .icon { margin:0px 10px 0px 0px; font-size:20px; }
-      footer .icon-last { margin:0px 0px 0px 0px; font-size:20px; }
+      footer .icon { margin:0px 10px 0px 0px; font-size:20px; color:#505050; }
+      footer .icon-last { margin:0px 0px 0px 0px; font-size:20px; color:#505050; }
       @media all and (max-width:900px) {
         body { margin:0px; padding:0px; }
         .logo { color:#DBA744; }
