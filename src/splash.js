@@ -174,6 +174,7 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
     let cyan = new Color([130, 150, 240]);
     let ecru = new Color([155, 165, 120]);
     let sage = new Color("#8ABD91");
+    let fern = new Color("#8ABD91").darker(6);
     let clay = new Color([115, 90, 93]);
     let gray = new Color([155, 145, 155]);
     let salt = new Color(gray).lighter(50);
@@ -186,6 +187,7 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
       cyan = new Color(cyan).darker(50);
       ecru = new Color(ecru).darker(100);
       sage = new Color(sage).darker(40);
+      fern = new Color(fern).darker(55);
       clay = new Color(clay).darker(60);
       gray = new Color(gray).darker(60);
       salt = new Color(salt).darker(50);
@@ -207,7 +209,7 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
       "look": {
         "face": { "color": ecru.lighter(50) }
       },
-      "coordinates": { "z": 1, "o": 0 }
+      "coordinates": { "z": 0, "o": 0 }
     });
 
     const building = new Concepts({
@@ -292,11 +294,7 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
       "form": { "shape": "cloud", "particle": "point" },
       "look": {
         "face": { "color": new Color([0, 0, 0, 0]) },
-        "edge": {
-          "color": new Color(sage).darker(6),
-          "lineWidth": 1,
-          "lineDash": []
-        },
+        "edge": { "color": fern, "lineWidth": 1, "lineDash": [] },
         "angles": [(1.5 * Math.PI) - 0.7, (1.5 * Math.PI) + 0.7]
       },
       "coordinates": { "z": 1, "o": 1 }
@@ -349,16 +347,12 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
       city (cs, fr) {
         const fc = fr.center();
 
-        const block_ = block.instance();
-        block_.$.coordinates.update(cs);
-        block_.$.feed = fc;
-        block_.setFaceColor_(
-          new Color(block_.$.look.face.color).nearby(16, fc.randReals(3)).darker(20)
-        );
-
         const ground_ = ground.instance();
         ground_.$.coordinates.update(cs);
         ground_.$.feed = fc;
+        ground_.setFaceColor_(
+          new Color(ecru.lighter(50)).nearby(16, fc.randReals(3)).darker(20)
+        );
 
         const building_ = building.instance();
         building_.$.coordinates = cs;
@@ -377,6 +371,7 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
         building_.base.$.offsets.update(offsetsBase);
 
         if (populated.anchored(cs)) {
+          ground_.$.dimensions.height = 1;
           building_.base.$.dimensions.height = baseHeight;
           building_.base.setFaceColor_(
             new Color(
@@ -443,7 +438,7 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
             });
           }
         } else {
-          ground_.$.dimensions.height = 0.2;
+          ground_.$.dimensions.height = 1.2;
 
           const baseColor =
             new Color(clay).lighter(35).nearby(15, fr.up().randReals(3));
@@ -475,7 +470,7 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
           delete building_.antenna;
         }
 
-        return [block_, ground_, building_];
+        return [ground_, building_];
       }
 
       shore (cs, fr) {
