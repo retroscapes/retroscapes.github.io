@@ -9,6 +9,55 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
     this.night = false;
   }
 
+  _determineCenter () {
+    const ps = new URLSearchParams(window.location.search);
+    const x = ps.get("x");
+    const y = ps.get("y");
+    this.center = {
+      "x": (x != null) ? parseInt(x) : Math.floor(Math.random() * 10000),
+      "y": (y != null) ? parseInt(y) : Math.floor(Math.random() * 10000)
+    };
+    return this.center;
+  }
+
+  reinitialize () {
+    const center = this._getProjection().getCenter();
+    this._setProjection(this._geometry());
+    const vps = this.render.render(center, this.scapes, this.feed);
+    this._alignment(vps);
+  }
+
+  _draw () {
+    const center = this._determineCenter();
+    document.getElementById(this.canvasElementId).style.opacity = 0;
+    document.getElementById('logo').style.opacity = 0;
+    document.getElementById('links').style.opacity = 0;
+    const vps = this.render.render(center, this.scapes, this.feed);
+    this._alignment(vps);
+    document.getElementById(this.canvasElementId).style.opacity = 1;
+    const self = this;
+    this.render.renderGradually(
+      center,
+      this.scapes,
+      this.feed,
+      function () {
+        document.getElementById("logo").style.opacity = 1;
+        document.getElementById("links").style.opacity = 1;
+        self.reinitialize();
+      }
+    );
+  }
+
+  _redraw (center) {
+    center = (center == null) ? this._getProjection().getCenter() : center;
+    this._setProjection(this._geometry());
+    const c = (center == null) ? this._determineCenter() : center;
+    const vps = this.render.render(c, this.scapes, this.feed);
+    this._alignment(vps);
+    this.render.render(center, this.scapes, this.feed);
+    this.reinitialize();
+  }
+
   _alignment (vps) {
     // Determine the bounds of the rendered blocks.
     const bounds = this._getPlateBounds();
