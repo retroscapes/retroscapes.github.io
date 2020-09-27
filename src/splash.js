@@ -196,7 +196,7 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
       document.getElementById(this.canvasElementId).style.background = "#000000";
       this.render.background = new retroscapes.Color([0, 0, 0]);
       this.render.light = { "top": -15, "left": 10, "right": 0 };
-      document.getElementById("footer").style.boxShadow = "0px 0px 15px #777777";
+      document.getElementById("content").style.boxShadow = "0px 0px 15px #777777";
     } else {
       switch_.classList.remove("fas");
       switch_.classList.remove("fa-sun");
@@ -206,7 +206,7 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
       document.getElementById(this.canvasElementId).style.background = "#FFFFFF";
       this.render.background = new retroscapes.Color([255, 255, 255]);
       this.render.light = { "top": 20, "left": -15, "right": -60 };
-      document.getElementById("footer").style.boxShadow = "0px 0px 15px #CCCCCC";
+      document.getElementById("content").style.boxShadow = "0px 0px 15px #CCCCCC";
     }
     this.render.resetCache();
     this.scapes = this._build();
@@ -329,7 +329,7 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
         "mesial": { "face": { "color": ecru } },
         "lateral": { "face": { "color": ecru } },
         "top": {
-          "face": { "color": ecru.lighter(50), "within": "15%" },
+          "face": { "color": new Color(ecru.lighter(50), { "within": "15%" }) },
           "edge": { "color": ecru.lighter(30), "lineWidth": 1.05, "lineDash": [] }
         }
       },
@@ -353,7 +353,7 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
       "dimensions": { "height": 1 },
       "form": { "shape": "prism" },
       "look": {
-        "face": { "color": blue, "within": "10%" }
+        "face": { "color": new Color(blue, { "within": "10%" }) }
       },
       "coordinates": { "z": 0, "o": 0 },
       "scales": { "x": 1, "y": 1, "z": 1 }
