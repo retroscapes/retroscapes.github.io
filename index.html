@@ -98,6 +98,17 @@
         border:1px solid #AAAAAA;
         border-radius:0px;
       }
+      .tiles { margin-top:10px; margin-bottom:60px; background-color:#FFFFFF; }
+      .tiles .card {
+        height:380px;
+        min-width:400px;
+        margin-bottom:20px;
+        padding:0px;
+        text-align:center;
+        border:0px solid #000000;
+        background:none;
+      }
+      .tiles canvas { border:0px solid #000000; width:470px; height:340px; }
       footer {
         width:100%;
         margin:auto auto 0 auto;
@@ -129,6 +140,19 @@
       footer .link { margin:0px 25px 0px 0px; white-space:nowrap; font-size:14px; }
       footer .icon { margin:0px 10px 0px 0px; font-size:20px; color:#505050; }
       footer .icon-last { margin:0px 0px 0px 0px; font-size:20px; color:#505050; }
+      @media all and (max-width:1200px) {
+        .tiles { margin-top:0px; }
+        .tiles canvas { width:410px; }
+        .tiles .card { margin-bottom:0px; }
+        .tiles .card-body { padding-top:0px; padding-bottom:0px; }
+      }
+      @media all and (max-width:991px) {
+        .tiles canvas { width:470px; }
+      }
+      @media all and (max-width:600px) {
+        .tiles { margin-bottom:70px; }
+        .tiles canvas { width:410px; }
+      }
       @media all and (max-width:900px) {
         body { margin:0px; padding:0px; }
         .logo { color:#DBA744; }
@@ -141,13 +165,21 @@
     <script src="https://retroscapes.codes/latest/retroscapes.js"></script>
     <script src="src/sample.js"></script>
     <script src="src/splash.js"></script>
+    <script src="src/tiles.js"></script>
     <script>
       // Create an instance of the app used for the splash landscape.
       const splash = new Splash('canvas-splash');
+      const tiles = [
+        new TileOne('canvas-one'),
+        new TileTwo('canvas-two'),
+        new TileThree('canvas-three'),
+        new TileFour('canvas-four')
+      ];
 
       // Handle events.
       window.onresize = function() {
         splash.reinitialize();
+        tiles.forEach(function (t) { t.reinitialize(); });
       };
 
       window.onload = function () {
@@ -160,6 +192,7 @@
           }
         });
         splash.initialize();
+        tiles.forEach(function (t) { t.initialize(); });
       }
     </script>
   </head>
@@ -185,7 +218,7 @@
         </span>
       </div>
     </div>                                
-    <div id="content" style="padding-bottom:50px;">
+    <div id="content">
       <div class="container">
         <div class="card-deck xl-2">
           <div class="card xl-4">
@@ -195,6 +228,32 @@
                 <pre><code class="html hljs xml">&lt;script src="https://retroscapes.codes/latest/retroscapes.js"&gt;&lt;/script&gt;</code></pre>
                 <button type="button" class="btn btn-light" id="copy"><i class="far fa-copy"></i></button>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container tiles">
+        <div class="card-deck xl-2">
+          <div class="card xl-4">
+            <div class="card-body">
+              <canvas id="canvas-one"></canvas>
+            </div>
+          </div>
+          <div class="card xl-4">
+            <div class="card-body">
+              <canvas id="canvas-two"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="card-deck xl-2">
+          <div class="card xl-4">
+            <div class="card-body">
+              <canvas id="canvas-three"></canvas>
+            </div>
+          </div>
+          <div class="card xl-4">
+            <div class="card-body">
+              <canvas id="canvas-four"></canvas>
             </div>
           </div>
         </div>

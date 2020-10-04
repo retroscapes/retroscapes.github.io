@@ -9,6 +9,10 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
     this.night = false;
   }
 
+  _effects () {
+    return [new retroscapes.EffectPlateSquare(0.88, { "x": -3, "y": -3 })];
+  }
+
   _determineCenter () {
     const ps = new URLSearchParams(window.location.search);
     const x = ps.get("x");
@@ -18,6 +22,36 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
       "y": (y != null) ? parseInt(y) : Math.floor(Math.random() * 10000)
     };
     return this.center;
+  }
+
+  initialize () {
+    this.scapes = this._build();
+    this.projection = this._geometry();
+    const self = this;
+    this.canvas = new retroscapes.Canvas(
+      document.getElementById(this.canvasElementId),
+      function () { return self._getProjection(); },
+      function (center) { self._redraw(center); },
+      [
+        new retroscapes.InteractionDrag(),
+        new retroscapes.InteractionNudge(
+          function () { return self._getPlateCenter(); }
+        )
+      ]
+    );
+
+    this.render = new retroscapes.Render({
+      "canvas": document.getElementById(this.canvasElementId),
+      "feed": this.feed,
+      "projection": this._getProjection(),
+      "background": new retroscapes.Color([255, 255, 255]),
+      "light": this._light(),
+      "effects": this._effects(),
+      "cache": true,
+      "precedence": false
+    });
+
+    this._draw();
   }
 
   reinitialize () {

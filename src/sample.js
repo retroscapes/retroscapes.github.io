@@ -13,6 +13,14 @@ class Sample { // eslint-disable-line no-unused-vars
     this.projection = null;
   }
 
+  _effects () {
+    return [new retroscapes.EffectPlateSquare(1, { "x": -3, "y": -3 })];
+  }
+
+  _light () {
+    return { "top": 20, "left": -15, "right": -60 };
+  }
+
   _geometry () {
     return new retroscapes.Geometry({
       "orientation": { "tilt": 30 },
@@ -83,10 +91,8 @@ class Sample { // eslint-disable-line no-unused-vars
       "feed": this.feed,
       "projection": this._getProjection(),
       "background": new retroscapes.Color([255, 255, 255]),
-      "light": { "top": 20, "left": -15, "right": -60 },
-      "effects": [
-        new retroscapes.EffectPlateSquare(0.88, { "x": -3, "y": -3 })
-      ],
+      "light": this._light(),
+      "effects": this._effects(),
       "cache": true,
       "precedence": false
     });
