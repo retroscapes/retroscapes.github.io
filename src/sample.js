@@ -101,9 +101,12 @@ class Sample { // eslint-disable-line no-unused-vars
   }
 
   reinitialize () {
-    const center = this._getProjection().getCenter();
-    this._setProjection(this._geometry());
-    this.render.render(center, this.scapes, this.feed);
+    const proj = this._getProjection();
+    if (proj != null && proj.getCenter != null) {
+      const center = proj.getCenter();
+      this._setProjection(this._geometry());
+      this.render.render(center, this.scapes, this.feed);
+    }
   }
 
   _draw () {

@@ -55,10 +55,13 @@ class Splash extends Sample { // eslint-disable-line no-unused-vars, no-undef
   }
 
   reinitialize () {
-    const center = this._getProjection().getCenter();
-    this._setProjection(this._geometry());
-    const vps = this.render.render(center, this.scapes, this.feed);
-    this._alignment(vps);
+    const proj = this._getProjection();
+    if (proj != null && proj.getCenter != null) {
+      const center = proj.getCenter();
+      this._setProjection(this._geometry());
+      const vps = this.render.render(center, this.scapes, this.feed);
+      this._alignment(vps);
+    }
   }
 
   _draw () {
